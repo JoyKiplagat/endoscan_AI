@@ -1,0 +1,286 @@
+text,source,esi_label,language,symptom_id,word_count,char_count,endo_keyword_hits,severity_detected
+My main problem is struggling to conceive.,synthetic,Critical,en,S026,7,42,0,moderate
+I have had leg pain during period since I was a teenager.,synthetic,High,en,S019,12,57,0,moderate
+"My experience is that miss school from period pain, for 6 years.",synthetic,Moderate,en-KE,S036,12,64,0,moderate
+I have had pain after sex since I was a teenager.,synthetic,Moderate,en,S006,11,49,0,moderate
+The problem I have is that pain starts a week before.,synthetic,Moderate,en,S003,11,53,0,moderate
+I experience pelvic pressure sometimes regularly.,synthetic,Low,en,S028,6,49,0,mild
+"The problem I have is that dropped out of school from pain, for about 12 months.",synthetic,High,en,S036,16,80,0,moderate
+I cannot work properly because of very bad scar painful cyclically.,synthetic,Moderate,en,S035,11,67,0,severe
+I am struggling with very bad dysmenorrhoea.,synthetic,High,en,S001,7,44,1,moderate
+The problem I have is that cannot get out of bed.,synthetic,Critical,en,S002,11,49,0,severe
+"The problem I have is that I cannot function during my period, for 3 years.",synthetic,Critical,en-KE,S001,15,75,0,severe
+I avoid sex because it hurts.,synthetic,Moderate,en-KE,S006,6,29,0,moderate
+For the past few months I have had vaginal pain during sex.,synthetic,High,en,S007,12,59,0,moderate
+I experience period makes me vomit regularly.,synthetic,Moderate,en,S013,7,45,0,moderate
+I am here because one doctor visit with no answer.,synthetic,Low,en,S038,10,50,0,moderate
+My main problem is mild miss work during period.,synthetic,Low,en,S036,9,48,0,mild
+The problem I have is that pain in bladder when urinating.,synthetic,Moderate,en,S015,11,58,0,moderate
+I am here because inner thigh pain during period.,synthetic,Moderate,en,S021,9,49,0,moderate
+"For the past few months I have had intense constant pelvic pain, for 6 years.",synthetic,High,en,S002,15,77,1,moderate
+The problem I have is that suffering for years with no diagnosis.,synthetic,High,en,S038,12,65,0,moderate
+I have had emergency from leg pain since I was a teenager.,synthetic,High,en,S019,12,58,0,moderate
+I told the doctor that pain builds up before period.,synthetic,High,en,S003,10,52,0,moderate
+"For the past few months I have had extreme sleep problems, for the past 36 months.",synthetic,Moderate,en,S031,16,82,0,moderate
+I have had serious running stomach during period since I was a teenager.,synthetic,Moderate,en,S012,13,72,0,moderate
+I am struggling with stomach swells up.,synthetic,Low,en,S014,7,39,0,moderate
+"Nilikuja hospitalini kwa sababu ya uchovu kupita kiasi, for over 24 months.",synthetic,High,sw,S022,12,75,0,moderate
+I told the doctor that I cannot function during my period.,synthetic,Moderate,en-KE,S001,11,58,0,severe
+My experience is that pain starts a few days early.,synthetic,Moderate,en,S003,10,51,0,moderate
+scar swells and hurts during period.,synthetic,Moderate,en,S035,6,36,0,moderate
+I have had cannot tolerate penetration since I was a teenager.,synthetic,Low,en,S007,11,62,0,severe
+I came to the clinic because of unbearable pain below belly button.,synthetic,Critical,en,S002,12,67,0,severe
+I told the doctor that cannot go to toilet without crying.,synthetic,Critical,en,S009,11,58,0,severe
+"Doctor, I have intense damu nyingi sana and I do not know what to do.",synthetic,Moderate,en,S005,15,69,0,moderate
+I came to the clinic because of need strong painkillers.,synthetic,High,en,S001,10,56,0,moderate
+Every month I suffer from low blood.,synthetic,High,en-KE,S023,7,36,0,moderate
+Tatizo langu kuu ni maumivu ya hedhi.,synthetic,High,sw,S001,7,37,0,moderate
+I told the doctor that cannot go to toilet when on period.,synthetic,Low,en,S011,12,58,0,severe
+The problem I have is that going dizzy and faint from pain.,synthetic,Moderate,en,S025,12,59,0,moderate
+in pain most of the month.,synthetic,High,en,S003,6,26,0,moderate
+big lump in scar needing operation.,synthetic,High,en,S035,6,35,0,moderate
+For the past few months I have had deep pain during intercourse.,synthetic,Moderate,en,S006,12,64,0,moderate
+I have had running stomach during period since I was a teenager.,synthetic,Low,en,S012,12,64,0,moderate
+"Doctor, I have tired all the time and I do not know what to do.",synthetic,High,en,S022,15,63,0,moderate
+I told the doctor that feeling of fullness in pelvis.,synthetic,Low,en,S028,10,53,0,moderate
+My main problem is random bleeding.,synthetic,Moderate,en,S004,6,35,0,moderate
+I experience excruciating pain in my thigh regularly.,synthetic,High,en,S019,8,53,0,severe
+"I cannot function during my period, for 6 months now.",synthetic,High,en-KE,S001,10,53,0,severe
+The problem I have is that CS scar painful during period.,synthetic,Moderate,en-KE,S035,11,57,0,moderate
+I have been dealing with feel sick during period for a while now.,synthetic,Low,en,S013,13,65,0,moderate
+For the past few months I have had back ache with period.,synthetic,Moderate,en,S018,12,57,0,moderate
+I have been dealing with panicking for a while now.,synthetic,Moderate,en,S030,10,51,0,moderate
+My experience is that kuhisi kichefuchefu wakati wa hedhi.,synthetic,Moderate,sw,S013,9,58,0,moderate
+I cannot work properly because of bleed between periods regularly.,synthetic,Moderate,en,S004,10,66,0,severe
+"Doctor, I have stomach gets very big and I do not know what to do.",synthetic,Low,en,S014,15,66,0,moderate
+The problem I have is that at risk of losing job.,synthetic,Moderate,en,S036,11,49,0,moderate
+The problem I have is that emergency hospital for blood in urine.,synthetic,High,en,S016,12,65,0,moderate
+I have cannot work properly.,synthetic,High,en,S002,5,28,0,severe
+I told the doctor that legs feel heavy during period.,synthetic,Low,en,S019,10,53,0,moderate
+Nina maumivu ya hedhi.,synthetic,High,sw,S001,4,22,0,moderate
+My main problem is need laxatives.,synthetic,Moderate,en,S011,6,34,0,moderate
+The problem I have is that cannot sleep well most nights.,synthetic,Moderate,en,S031,11,57,0,severe
+I am here because doctors keep sending me away.,synthetic,Low,en-KE,S038,9,47,0,moderate
+Nimekuwa na maumivu wakati wa kujamiiana kwa muda mrefu.,synthetic,High,sw,S006,9,56,0,moderate
+I told the doctor that cannot breathe properly from bloating.,synthetic,High,en,S014,10,61,1,severe
+I want you to know that pain even when I am not on my period.,synthetic,Moderate,en-KE,S002,15,61,0,moderate
+"Doctor, I have pain between periods and I do not know what to do.",synthetic,High,en,S002,14,65,0,moderate
+I am struggling with extreme sleep problems.,synthetic,Moderate,en,S031,7,44,0,moderate
+cycle is all over the place.,synthetic,Moderate,en,S027,6,28,0,moderate
+I told the doctor that trying for a baby without success.,synthetic,High,en-KE,S026,11,57,0,moderate
+I cannot function during my period.,synthetic,Critical,en-KE,S001,6,35,0,severe
+have to sit down suddenly from dizziness.,synthetic,Moderate,en,S025,7,41,0,moderate
+I came to the clinic because of period makes me vomit.,synthetic,High,en,S013,11,54,0,moderate
+I came to the clinic because of severe bloody urine.,synthetic,High,en,S016,10,52,0,severe
+I want you to know that told it is just period pain.,synthetic,Low,en-KE,S038,12,52,0,moderate
+I came to the clinic because of IVF recommended.,synthetic,High,en,S026,9,48,0,moderate
+I cannot work properly because of slight loose stools during period.,synthetic,Low,en,S012,11,68,0,severe
+"Doctor, I have slight burning at start and I do not know what to do.",synthetic,Low,en,S007,15,68,0,mild
+"Doctor, I have anaemia and I do not know what to do.",synthetic,Moderate,en,S023,12,52,0,moderate
+I have been dealing with more tired during period for a while now.,synthetic,Low,en,S022,13,66,0,moderate
+I have been dealing with unbearable loose stools during period for a while now.,synthetic,High,en,S012,14,79,0,severe
+I have had serious bleeding after sex since I was a teenager.,synthetic,Moderate,en,S008,12,61,0,moderate
+I have had severe bleeding between periods since I was a teenager.,synthetic,Moderate,en,S004,12,66,0,severe
+I have been dealing with emergency rectal bleeding for a while now.,synthetic,High,en,S010,12,67,0,moderate
+I experience need laxatives regularly.,synthetic,Moderate,en,S011,5,38,0,moderate
+"I want you to know that I cannot function during my period, since I was 15 years old.",synthetic,Critical,en-KE,S001,18,85,0,severe
+I have constant worry.,synthetic,Moderate,en,S030,4,22,0,moderate
+I am here because pain starts days before period.,synthetic,Moderate,en,S003,9,49,0,moderate
+I am here because severe pain every time I urinate during period.,synthetic,Moderate,en,S015,12,65,0,severe
+My experience is that been trying for over a year.,synthetic,Moderate,en,S026,10,50,0,moderate
+"I told the doctor that need to rest more than I should, for 2 years.",synthetic,Moderate,en,S022,15,68,0,moderate
+"I told the doctor that siku zangu za mwezi ni za maumivu, for about 12 months.",synthetic,Critical,sw,S001,16,78,0,moderate
+"My experience is that my period affects my job, for the past 36 months.",synthetic,Moderate,en,S036,14,71,0,moderate
+"I have been dealing with on medication for depression for a while now, for 3 months now.",synthetic,Moderate,en,S029,17,88,0,moderate
+I cannot work properly because of excruciating burning during sex.,synthetic,High,en,S007,10,66,0,severe
+Nimekuwa na nimechoka sana kila wakati kwa muda mrefu.,synthetic,Moderate,sw,S022,9,54,0,moderate
+Nimekuwa nikilalamika kuhusu kuzimia kutokana na maumivu.,synthetic,High,sw,S025,7,57,0,moderate
+I am here because I lose days every month.,synthetic,High,en,S036,9,42,0,moderate
+The problem I have is that cough up blood with period.,synthetic,High,en,S033,11,54,0,moderate
+"Nimekuwa na maumivu ya nyonga kwa muda mrefu, for 2 years.",synthetic,Moderate,sw,S002,11,58,0,moderate
+I am here because hard to pass stool during period.,synthetic,Moderate,en,S011,10,51,0,moderate
+I have been dealing with excruciating loose stools during period for a while now.,synthetic,High,en,S012,14,81,0,severe
+pain in my lower belly.,synthetic,Moderate,en-KE,S002,5,23,0,moderate
+I am struggling with hip pain every period.,synthetic,Moderate,en,S021,8,43,0,moderate
+shooting pain in leg during period.,synthetic,Moderate,en,S019,6,35,0,moderate
+"I cannot work properly because of anxious all the time, for the past 24 months.",synthetic,Low,en,S030,15,79,0,severe
+For the past few months I have had slight losing consciousness during period.,synthetic,Moderate,en,S025,13,77,0,mild
+I want you to know that kuhisi kichefuchefu wakati wa hedhi.,synthetic,High,sw,S013,11,60,0,moderate
+My main problem is more tired during period.,synthetic,Low,en,S022,8,44,0,moderate
+I have had some collapsing from pain since I was a teenager.,synthetic,Moderate,en,S025,12,60,0,moderate
+I want you to know that cycle is 2 months sometimes.,synthetic,Moderate,en,S027,11,52,0,mild
+"Tatizo langu kuu ni hedhi inaniuma, for the past 2 months.",synthetic,Moderate,sw,S001,11,58,0,moderate
+I have been dealing with extreme deep pain during intercourse for a while now.,synthetic,Critical,en,S006,14,78,0,moderate
+My main problem is mild endo belly.,synthetic,Low,en,S014,7,35,0,mild
+I came to the clinic because of trying for 2-3 years.,synthetic,High,en,S026,11,53,0,moderate
+I came to the clinic because of slight burning at start.,synthetic,Low,en,S007,11,56,0,mild
+The problem I have is that belly button uncomfortable during period.,synthetic,Moderate,en,S034,11,68,0,moderate
+Tatizo langu kuu ni sijapata mimba ingawa ninajaribu.,synthetic,Moderate,sw,S026,8,53,0,moderate
+"I am struggling with no social life anymore, for about 3 months.",synthetic,Moderate,en,S037,12,64,0,moderate
+I told the doctor that cannot breathe well during period.,synthetic,Moderate,en,S032,10,57,0,severe
+I have sex is unbearable.,synthetic,Critical,en,S006,5,25,0,severe
+For the past few months I have had occasional pale from blood loss.,synthetic,Low,en,S023,13,67,0,mild
+Sijui nifanye nini kuhusu kuzimia kutokana na maumivu.,synthetic,High,sw,S025,8,54,0,moderate
+I cannot work properly because of cannot pass anything.,synthetic,High,en,S011,9,55,0,severe
+I came to the clinic because of serious period makes me vomit.,synthetic,Moderate,en,S013,12,62,0,moderate
+blood in urine during period.,synthetic,High,en,S015,5,29,0,moderate
+I cannot work properly because of occasional cramps during period.,synthetic,Moderate,en,S001,10,66,0,severe
+"I am here because miss school from period pain, for over 3 months.",synthetic,Moderate,en-KE,S036,13,66,0,moderate
+I came to the clinic because of feel feverish during period.,synthetic,High,en,S024,11,60,0,moderate
+I am struggling with worried about my condition.,synthetic,Low,en,S030,8,48,0,moderate
+Nimekuwa na kuumwa unapokwenda chooni kwa muda mrefu.,synthetic,Moderate,sw,S009,8,53,0,moderate
+I am here because pain shoots down my leg.,synthetic,High,en,S019,9,42,0,moderate
+I told the doctor that chronic pain in my pelvis.,synthetic,High,en,S002,10,49,0,moderate
+I am struggling with look pregnant from bloating.,synthetic,Moderate,en,S014,8,49,1,moderate
+My main problem is unbearable cannot hold my bladder.,synthetic,High,en,S017,9,53,0,severe
+I have had occasional treated for something else since I was a teenager.,synthetic,Low,en,S038,13,72,0,mild
+I want you to know that swelling at belly button during period.,synthetic,Moderate,en,S034,12,63,0,moderate
+I told the doctor that cycle is all over the place.,synthetic,Low,en,S027,11,51,0,moderate
+I came to the clinic because of diarrhoea every period.,synthetic,Low,en,S012,10,55,0,moderate
+I have had feeling worthless since I was a teenager.,synthetic,Moderate,en,S029,10,52,0,moderate
+I experience treated for wrong thing regularly.,synthetic,Moderate,en,S038,7,47,0,moderate
+mgongo unaniuma wakati wa hedhi.,synthetic,Moderate,en,S018,5,32,0,moderate
+"I want you to know that dropped out of school from pain, for over 3 months.",synthetic,High,en,S036,16,75,0,moderate
+"Doctor, I have unbearable dysuria and I do not know what to do.",synthetic,High,en,S015,13,63,0,severe
+I experience painful periods regularly.,synthetic,Moderate,en,S001,5,39,1,moderate
+My experience is that my time of the month is unbearable.,synthetic,Moderate,en,S001,11,57,0,severe
+"I came to the clinic because of exhausted from poor sleep, since I was 13 years old.",synthetic,Moderate,en,S031,17,84,0,moderate
+need to pee all the time.,synthetic,Moderate,en,S017,6,25,0,moderate
+I am here because hot and sweaty during period.,synthetic,Low,en,S024,9,47,0,moderate
+I came to the clinic because of unbearable period makes me vomit.,synthetic,High,en,S013,12,65,0,severe
+I am here because slight pain when going toilet on period.,synthetic,Moderate,en,S009,11,58,0,mild
+I cannot work properly because of slight stomach upset with period.,synthetic,Low,en,S012,11,67,0,severe
+My experience is that trying for a baby without success.,synthetic,Moderate,en,S026,10,56,0,moderate
+My experience is that legs feel heavy during period.,synthetic,Low,en,S019,9,52,0,moderate
+I want you to know that inner thigh pain during period.,synthetic,Moderate,en,S021,11,55,0,moderate
+I cannot work properly because of tingling in leg.,synthetic,Low,en,S019,9,50,0,severe
+"Doctor, I have hospitalised for anaemia and I do not know what to do.",synthetic,High,en,S023,14,69,0,moderate
+My main problem is hip pain every period.,synthetic,Moderate,en,S021,8,41,0,moderate
+pain builds up before period.,synthetic,Moderate,en,S003,5,29,0,moderate
+I told the doctor that blood in sputum during period.,synthetic,High,en,S033,10,53,0,moderate
+I am here because bowels stop working during period.,synthetic,Moderate,en,S011,9,52,0,moderate
+I have had slight anaemia since I was a teenager.,synthetic,Low,en,S023,10,49,0,mild
+"Doctor, I have coughing blood during period and I do not know what to do.",synthetic,Moderate,en,S033,15,73,0,moderate
+"Doctor, I have periods are not regular and I do not know what to do.",synthetic,Low,en,S027,15,68,0,moderate
+I experience fever every period regularly.,synthetic,Low,en,S024,6,42,0,moderate
+I am here because emergency pad changes every 30 minutes.,synthetic,High,en,S005,10,57,0,moderate
+"Tatizo langu kuu ni maumivu ya hedhi, for about 3 months.",synthetic,Moderate,sw,S001,11,57,0,moderate
+The problem I have is that sometimes bleed a little after sex.,synthetic,Low,en,S008,12,62,0,mild
+I cannot work properly because of moderate spotting.,synthetic,Moderate,en,S004,8,52,0,severe
+I cannot work properly because of significant sleep problems.,synthetic,Low,en,S031,9,61,0,severe
+I am struggling with coughing blood during period.,synthetic,Moderate,en,S032,8,50,0,moderate
+"Doctor, I have significant miss work during period and I do not know what to do.",synthetic,Moderate,en,S036,16,80,0,moderate
+I told the doctor that inner thigh pain during period.,synthetic,High,en,S021,10,54,0,moderate
+My experience is that CS scar painful during period.,synthetic,Low,en-KE,S035,9,52,0,moderate
+throw up from period pain.,synthetic,Low,en,S013,5,26,0,moderate
+The problem I have is that feel slightly sick during period.,synthetic,Low,en,S013,11,60,0,mild
+I am struggling with noticeable feeling depressed.,synthetic,Low,en,S029,7,50,0,moderate
+"Doctor, I have blood in pee and I do not know what to do.",synthetic,High,en,S016,14,57,0,moderate
+For the past few months I have had completely alone.,synthetic,High,en,S037,10,52,0,moderate
+I have had regular faint from low blood since I was a teenager.,synthetic,Moderate,en,S023,13,63,0,moderate
+I have had excruciating blood after intercourse since I was a teenager.,synthetic,High,en,S008,12,71,0,severe
+Tatizo langu kuu ni damu nyingi sana.,synthetic,Low,sw,S005,7,37,0,moderate
+"For the past few months I have had always tired, for about 24 months.",synthetic,Low,en,S022,14,69,0,moderate
+"I told the doctor that pain even when I am not on my period, for 12 months now.",synthetic,High,en-KE,S002,18,79,0,moderate
+My experience is that bleed after sex most times.,synthetic,Low,en,S008,9,49,0,moderate
+I have been dealing with severe told I am exaggerating for a while now.,synthetic,Moderate,en,S038,14,71,0,severe
+I have very bad cannot sleep from pain.,synthetic,Moderate,en,S031,8,39,0,severe
+"I am here because pain wakes me up regularly, for 36 months now.",synthetic,Low,en,S031,13,64,0,moderate
+The problem I have is that right shoulder pain during period.,synthetic,Moderate,en,S020,11,61,0,moderate
+"I have distracting pain, for about 6 months.",synthetic,High,en,S002,8,44,0,moderate
+Nimekuwa nikilalamika kuhusu mgongo unaniuma.,synthetic,Moderate,sw,S018,5,45,0,moderate
+I have extreme clots during period.,synthetic,High,en,S005,6,35,0,moderate
+I cannot work properly because of told I am anaemic.,synthetic,Moderate,en,S023,10,52,0,severe
+I have had have to stop sometimes since I was a teenager.,synthetic,Moderate,en,S006,12,57,0,mild
+I have scar bleeds during period.,synthetic,Moderate,en,S035,6,33,0,moderate
+I want you to know that period has ruined my relationship.,synthetic,High,en,S037,11,58,0,moderate
+"Doctor, I have occasional shoulder pain during period and I do not know what to do.",synthetic,Low,en,S020,16,83,0,mild
+"I experience fainted regularly, for 2 months now.",synthetic,Critical,en,S001,8,49,0,moderate
+I am struggling with constipation during period.,synthetic,Moderate,en,S011,7,48,0,moderate
+I have been dealing with pain in groin area for a while now.,synthetic,Moderate,en,S021,13,60,0,moderate
+The problem I have is that lump in belly button requiring surgery.,synthetic,High,en,S034,12,66,0,moderate
+I have been dealing with regular bleeding through clothes for a while now.,synthetic,Moderate,en,S005,13,74,0,moderate
+I told the doctor that been trying for over a year.,synthetic,Critical,en,S026,11,51,0,moderate
+"I told the doctor that cannot work because I am so tired, since I was 17 years old.",synthetic,Moderate,en,S022,18,83,0,severe
+I told the doctor that throw up from period pain.,synthetic,High,en,S013,10,49,0,moderate
+For the past few months I have had intense irregular periods.,synthetic,Moderate,en,S027,11,61,0,moderate
+My main problem is bloody urine.,synthetic,Moderate,en,S016,6,32,0,moderate
+I cannot work properly because of noticeable cannot socialise during period.,synthetic,Low,en,S037,11,76,0,severe
+My experience is that have to sit down suddenly from dizziness.,synthetic,Moderate,en,S025,11,63,0,moderate
+The problem I have is that pain in my lower belly.,synthetic,High,en-KE,S002,11,50,0,moderate
+I am here because tummy blows up around period.,synthetic,Low,en,S014,9,47,0,moderate
+For the past few months I have had loose stools during period.,synthetic,High,en,S012,12,62,0,moderate
+I am here because cycle is all over the place.,synthetic,Low,en,S027,10,46,0,moderate
+I am struggling with in bed from exhaustion.,synthetic,Moderate,en,S022,8,44,0,moderate
+Sijui nifanye nini kuhusu kujamiiana kunauma.,synthetic,Moderate,sw,S006,6,45,0,moderate
+"I want you to know that avoiding activities from fear of pain, for 24 years.",synthetic,Low,en,S030,15,76,0,moderate
+"I experience pain between periods regularly, for 3 years.",synthetic,Moderate,en,S002,9,57,0,moderate
+The problem I have is that cannot do anything because I am tired.,synthetic,Low,en,S022,13,65,0,severe
+I cannot work properly because of pain in my hip.,synthetic,Moderate,en,S021,10,49,0,severe
+I am struggling with slightly bloated around period.,synthetic,Low,en,S014,8,52,0,mild
+My main problem is cough blood during period.,synthetic,Moderate,en,S033,8,45,0,moderate
+I want you to know that blood when not on period.,synthetic,High,en,S004,11,49,0,moderate
+I have pain has isolated me.,synthetic,High,en,S037,6,28,0,moderate
+"Doctor, I have intense endo belly and I do not know what to do.",synthetic,Moderate,en,S014,14,63,0,moderate
+Nilikuja hospitalini kwa sababu ya maumivu ya nyonga.,synthetic,High,sw,S002,8,53,0,moderate
+The problem I have is that tummy blows up around period.,synthetic,High,en,S014,11,56,0,moderate
+I cannot work properly because of nearly faint during period.,synthetic,Moderate,en,S025,10,61,0,severe
+"I came to the clinic because of moderate always tired, for 3 years.",synthetic,Moderate,en,S022,13,67,0,moderate
+I have been dealing with period makes me vomit for a while now.,synthetic,Low,en,S013,13,63,0,moderate
+"Doctor, I have something feels different inside and I do not know what to do.",synthetic,Low,en,S028,15,77,0,moderate
+I am struggling with pain passing stool.,synthetic,Critical,en,S009,7,40,0,moderate
+I have had chest tightness with period since I was a teenager.,synthetic,Moderate,en,S032,12,62,0,moderate
+I cannot work properly because of spotting.,synthetic,Moderate,en,S004,7,43,0,severe
+"Nilikuja hospitalini kwa sababu ya maumivu ya nyonga, for over 3 months.",synthetic,Critical,sw,S002,12,72,0,moderate
+Nimekuwa nikilalamika kuhusu maumivu ya hedhi.,synthetic,High,sw,S001,6,46,0,moderate
+I have come to see the doctor because of changing pad every hour.,synthetic,High,en-KE,S005,13,65,0,moderate
+Tatizo langu kuu ni hedhi nyingi sana.,synthetic,High,sw,S005,7,38,0,moderate
+I have had cannot keep food down since I was a teenager.,synthetic,Moderate,en,S013,12,56,0,severe
+"My experience is that miss school from period pain, for 12 years.",synthetic,High,en-KE,S036,12,65,0,moderate
+Nimekuwa nikilalamika kuhusu damu nyingi sana.,synthetic,Low,sw,S005,6,46,0,moderate
+For the past few months I have had regular cannot sleep from pain.,synthetic,Low,en,S031,13,66,0,severe
+I experience cannot conceive regularly.,synthetic,Critical,en,S026,5,39,0,severe
+"I have been dealing with feeling depressed for a while now, for the past 6 months.",synthetic,Low,en,S029,16,82,0,moderate
+The problem I have is that blood in phlegm during period.,synthetic,Moderate,en,S033,11,57,0,moderate
+pain shoots down my legs.,synthetic,High,en,S018,5,25,0,moderate
+My main problem is miss one day sometimes.,synthetic,Low,en,S036,8,42,0,mild
+I experience severe pain in my thigh regularly.,synthetic,Moderate,en,S019,8,47,0,severe
+been to many doctors with no answer.,synthetic,Moderate,en,S038,7,36,0,moderate
+"I told the doctor that I cannot function during my period, for over 3 months.",synthetic,High,en-KE,S001,15,77,0,severe
+I need help with low blood.,synthetic,Moderate,en-KE,S023,6,27,0,moderate
+My main problem is slight pain day before.,synthetic,Low,en,S003,8,42,0,mild
+I came to the clinic because of it hurts to poop.,synthetic,Critical,en,S009,11,49,0,moderate
+My experience is that belly button painful and swollen during period.,synthetic,Moderate,en,S034,11,69,0,moderate
+For the past few months I have had have to stop sometimes.,synthetic,Moderate,en,S006,12,58,0,mild
+My experience is that told I have a cyst.,synthetic,High,en-KE,S028,9,41,0,moderate
+Since I was young I have had stomach upset with period.,synthetic,Low,en-KE,S012,11,55,0,moderate
+I am struggling with excruciating random bleeding.,synthetic,High,en,S004,7,50,0,severe
+The problem I have is that trying for over a year.,synthetic,Moderate,en,S026,11,50,0,moderate
+"I am struggling with panicking, for the past 2 months.",synthetic,Low,en,S030,10,54,0,moderate
+I have had treated for something else since I was a teenager.,synthetic,Moderate,en,S038,12,61,0,moderate
+I am struggling with stomach gets very big.,synthetic,Low,en,S014,8,43,0,moderate
+I want you to know that cough up blood with period.,synthetic,High,en,S033,11,51,0,moderate
+I cannot work properly because of feel down sometimes.,synthetic,Low,en,S029,9,54,0,severe
+Tatizo langu kuu ni mgongo unaniuma.,synthetic,Moderate,sw,S018,6,36,0,moderate
+"Doctor, I have occasional feel sick during period and I do not know what to do.",synthetic,Low,en,S013,16,79,0,mild
+Since I was young I have had changing pad every hour.,synthetic,Low,en-KE,S005,11,53,0,moderate
+I am struggling with pain in my hip.,synthetic,Moderate,en,S021,8,36,0,moderate
+doctors keep sending me away.,synthetic,Low,en-KE,S038,5,29,0,moderate
+I have had urgent need to pee since I was a teenager.,synthetic,Low,en,S017,12,53,0,moderate
+I want you to know that cannot breathe properly from bloating.,synthetic,High,en,S014,11,62,1,severe
+"I have completely alone, for about 3 months.",synthetic,High,en,S037,8,44,0,moderate
+"pain even when I am not on my period, for over 2 months.",synthetic,High,en-KE,S002,13,56,0,moderate
+My main problem is fear about my fertility.,synthetic,Low,en,S030,8,43,0,moderate
+"I cannot work properly because of exhausted from poor sleep, for 2 months now.",synthetic,Moderate,en,S031,14,78,0,severe
+"pain that never goes away, since I was 17 years old.",synthetic,Critical,en,S002,11,52,0,moderate
+I want you to know that hot and sweaty during period.,synthetic,Moderate,en,S024,11,53,0,moderate
+Every month I suffer from no one believed me.,synthetic,Moderate,en-KE,S038,9,45,0,moderate
+My main problem is fever during period.,synthetic,Moderate,en,S024,7,39,0,moderate
+I cannot work properly because of severe pain affects my relationship.,synthetic,Moderate,en,S037,11,70,0,severe
+I want you to know that pain shoots down my legs.,synthetic,High,en,S018,11,49,0,moderate
+I have had excruciating uchovu kupita kiasi since I was a teenager.,synthetic,High,en,S022,12,67,0,severe
+"I want you to know that I lose days every month, for the past 24 months.",synthetic,High,en,S036,16,72,0,moderate
+"Doctor, I have lung collapsed during period and I do not know what to do.",synthetic,High,en,S032,15,73,0,moderate
+Nina uchovu kupita kiasi.,synthetic,Moderate,sw,S022,4,25,0,moderate
+My experience is that pelvic pain a week before my period.,synthetic,High,en,S003,11,58,1,moderate
+My experience is that my period affects my job.,synthetic,Moderate,en,S036,9,47,0,moderate
