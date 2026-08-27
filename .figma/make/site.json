@@ -1,0 +1,11 @@
+{
+  "title": "Endo Scan AI",
+  "description": "Provides endometriosis patients with comprehensive information and practical guidance to understand and manage their condition effectively.",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}
