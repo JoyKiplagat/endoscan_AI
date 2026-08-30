@@ -21,12 +21,12 @@ const STAGES = [
 ];
 
 const COPING = [
-  { icon: "🌡️", title: "Heat therapy", body: "A heating pad for 15–20 min relaxes uterine muscles and cuts cramping. One of the simplest and most effective tools." },
-  { icon: "🥗", title: "Anti-inflammatory diet", body: "More oily fish, greens, and fibre. Less processed food and alcohol. Reducing inflammation systemically can ease symptoms." },
-  { icon: "🧘", title: "Gentle movement", body: "Yoga, swimming, and walking ease pain and lift mood. Skip high-intensity sessions during flares." },
-  { icon: "🩺", title: "Pelvic physiotherapy", body: "A specialist physio can relieve the muscle tension that amplifies endometriosis pain — often overlooked and highly effective." },
-  { icon: "📓", title: "Symptom tracking", body: "Log pain (0–10), location, diet, and cycle for 2+ cycles. Patterns emerge and your clinician gets better data." },
-  { icon: "🤝", title: "Community support", body: "Connecting with others who understand — online or in-person — reduces isolation and surfaces practical strategies." },
+  {  title: "Heat therapy", body: "A heating pad for 15–20 min relaxes uterine muscles and cuts cramping. One of the simplest and most effective tools." },
+  {  title: "Anti-inflammatory diet", body: "More oily fish, greens, and fibre. Less processed food and alcohol. Reducing inflammation systemically can ease symptoms." },
+  {  title: "Gentle movement", body: "Yoga, swimming, and walking ease pain and lift mood. Skip high-intensity sessions during flares." },
+  {  title: "Pelvic physiotherapy", body: "A specialist physio can relieve the muscle tension that amplifies endometriosis pain — often overlooked and highly effective." },
+  {  title: "Symptom tracking", body: "Log pain (0–10), location, diet, and cycle for 2+ cycles. Patterns emerge and your clinician gets better data." },
+  {  title: "Community support", body: "Connecting with others who understand — online or in-person — reduces isolation and surfaces practical strategies." },
 ];
 
 const TREATMENTS = [
@@ -60,37 +60,47 @@ export default function App() {
   return (
     <div style={{ background: "var(--color-offwhite)", color: "var(--color-charcoal)", fontFamily: "var(--font-body)" }}>
 
-      {/* NAV */}
-      <nav style={{ background: "var(--color-crimson)" }} className="sticky top-0 z-50 flex items-center justify-between px-6 md:px-14 py-4">
-        <span style={{ fontFamily: "var(--font-display)", color: "var(--color-blush)", fontSize: "1.5rem", fontWeight: 800, letterSpacing: "0.05em" }}>
-          HER MATTERS
-        </span>
-        <div className="hidden md:flex gap-8">
-          {["About", "Symptoms", "Stages", "Coping", "Treatment", "Support"].map((l) => (
-            <a key={l} href={`#${l.toLowerCase()}`} style={{ color: "rgba(234,160,176,0.8)", fontSize: "0.8rem", fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase", textDecoration: "none" }}
-              onMouseEnter={e => (e.currentTarget.style.color = "var(--color-blush)")}
-              onMouseLeave={e => (e.currentTarget.style.color = "rgba(234,160,176,0.8)")}
-            >{l}</a>
-          ))}
-        </div>
-      </nav>
+          <nav style={{ background: 'var(--color-crimson)' }} className="sticky top-0 z-50 flex items-center justify-between px-6 md:px-14 py-4">
+            <span style={{ fontFamily: 'var(--font-display)', color: 'var(--color-blush)', fontSize: '1.5rem', fontWeight: 800, letterSpacing: '0.05em' }}> 
+              HER MATTERS 
+            </span> 
+            <div className="hidden md:flex gap-8"> 
+              {[
+                { label: 'Home', href: '#Home' }, 
+                { label: 'About', href: '#about' },                
+                { label: 'Stages', href: '#stages' }, 
+                { label: 'Treatment', href: '#treatment' }, 
+                { label: 'Support', href: '#support' },
+                { label: 'Sign In', href: '/auth' }
+              ].map((l) => ( 
+                <a 
+                  key={l.label} 
+                  href={l.href} 
+                  style={{ color: 'rgba(234,160,176,0.8)', fontSize: '0.8rem', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', textDecoration: 'none' }} 
+                  onMouseEnter={e => (e.currentTarget.style.color = 'var(--color-blush)')} 
+                  onMouseLeave={e => (e.currentTarget.style.color = 'rgba(234,160,176,0.8)')} 
+                >
+                  {l.label}
+                </a> 
+              ))} 
+            </div> 
+          </nav>
 
       {/* HERO */}
-      <section id="about" className="relative overflow-hidden min-h-[90vh] flex flex-col md:flex-row">
+      <section id="Home" className="relative overflow-hidden min-h-[90vh] flex flex-col md:flex-row">
         {/* Left — brand image */}
-        <div className="md:w-2/5 relative min-h-[40vh] md:min-h-[90vh]">
+          <div className="w-full md:w-2/5 relative min-h-[40vh] md:min-h-[90vh]">
           <img src={brandImg} alt="Her Matters brand identity" className="absolute inset-0 w-full h-full object-cover" />
         </div>
         {/* Right — headline */}
         <div className="md:w-3/5 flex flex-col justify-center px-8 md:px-16 py-16" style={{ background: "var(--color-crimson)" }}>
-          <p style={{ color: "var(--color-amber)", fontSize: "0.75rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: "1.5rem" }}>
-            Patient Education Guide
-          </p>
-          <h1 style={{ fontFamily: "var(--font-display)", fontWeight: 900, fontSize: "clamp(3.5rem, 8vw, 6.5rem)", lineHeight: 0.95, color: "white", marginBottom: "1.5rem", textTransform: "uppercase" }}>
+          {/* <p style={{ color: "var(--color-amber)", fontSize: "0.75rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: "1.5rem" }}>
+          </p> */}
+          <h1 style={{ fontFamily: "var(--font-display)", fontWeight: 900, fontSize: "clamp(3.5rem, 5vw, 6.5rem)", lineHeight: 0.95, color: "white", marginBottom: "0.5rem", textTransform: "uppercase" }}>
             Endometriosis:<br />
             <span style={{ color: "var(--color-blush)" }}>Know It.<br />Own It.</span>
           </h1>
-          <p style={{ color: "rgba(255,255,255,0.75)", fontSize: "1.1rem", lineHeight: 1.7, maxWidth: "420px", marginBottom: "2.5rem" }}>
+          <p style={{ color: "rgba(255,255,255,0.75)", fontSize: "1.1rem", lineHeight: 1.9, maxWidth: "420px", marginBottom: "2.5rem" }}>
             190 million people live with endometriosis worldwide — yet diagnosis takes an average of <strong style={{ color: "var(--color-amber)" }}>7–10 years</strong>. This guide gives you the knowledge to advocate for yourself.
           </p>
           <div className="flex flex-wrap gap-3">
@@ -107,7 +117,7 @@ export default function App() {
             {[["1 in 10", "people assigned female at birth"], ["7–10 yrs", "average diagnosis delay"], ["#2", "cause of female infertility"]].map(([val, label]) => (
               <div key={label}>
                 <p style={{ fontFamily: "var(--font-display)", fontWeight: 800, fontSize: "1.5rem", color: "var(--color-amber)" }}>{val}</p>
-                <p style={{ fontSize: "0.7rem", color: "rgba(255,255,255,0.55)", lineHeight: 1.4, maxWidth: "80px" }}>{label}</p>
+                <p style={{ fontSize: "0.7rem", color: "rgba(255,255,255,0.55)", lineHeight: 1.0, maxWidth: "80px" }}>{label}</p>
               </div>
             ))}
           </div>
@@ -118,8 +128,8 @@ export default function App() {
       <section style={{ background: "var(--color-offwhite)", padding: "5rem 0" }}>
         <div className="max-w-5xl mx-auto px-6 md:px-14 grid md:grid-cols-2 gap-12 items-center">
           <div>
-            <p style={{ color: "var(--color-crimson)", fontSize: "0.75rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: "1rem" }}>What is it?</p>
-            <h2 style={{ fontFamily: "var(--font-display)", fontWeight: 800, fontSize: "clamp(2.5rem,5vw,3.5rem)", lineHeight: 1, color: "var(--color-crimson)", textTransform: "uppercase", marginBottom: "1.5rem" }}>
+            <p style={{ color: "var(--color-crimson)", fontSize: "0.75rem", fontWeight: 100, letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: "1rem" }}>What is it?</p>
+            <h2 style={{ fontFamily: "var(--font-display)", fontWeight: 200, fontSize: "clamp(2.5rem,3vw,3.5rem)", lineHeight: 1, color: "var(--color-crimson)", textTransform: "uppercase", marginBottom: "1.5rem" }}>
               Tissue that grows where it shouldn't
             </h2>
             <p style={{ fontSize: "1rem", lineHeight: 1.8, color: "var(--color-charcoal)", marginBottom: "1rem" }}>
@@ -129,7 +139,7 @@ export default function App() {
               Each month it swells and bleeds with your cycle — but unlike the uterine lining, it has nowhere to go. This causes inflammation, scarring (adhesions), and cysts on the ovaries (endometriomas).
             </p>
             <div style={{ background: "var(--color-crimson)", color: "white", borderRadius: "1rem", padding: "1.25rem 1.5rem", display: "inline-flex", gap: "1rem", alignItems: "flex-start", marginTop: "0.5rem" }}>
-              <span style={{ fontSize: "1.5rem", flexShrink: 0 }}>💡</span>
+              <span style={{ fontSize: "1.5rem", flexShrink: 0 }}></span>
               <p style={{ fontSize: "0.875rem", lineHeight: 1.7 }}>
                 <strong style={{ color: "var(--color-amber)" }}>Pain severity ≠ disease severity.</strong> You can have Stage IV endometriosis with little pain, or Stage I with debilitating pain. Never let anyone dismiss you.
               </p>
@@ -149,7 +159,7 @@ export default function App() {
         </div>
       </section>
       {/* SCREENING SYSTEM CTA */}
-      <section style={{ background: "var(--color-crimson)", padding: "6rem 0", overflow: "hidden" }} className="relative">
+      <section id= "about" style={{ background: "var(--color-crimson)", padding: "4rem 0", overflow: "hidden" }} className="relative">
         {/* Background visual anchor */}
         <div style={{ position: "absolute", top: "-10%", right: "-10%", width: "400px", height: "400px", borderRadius: "50%", background: "rgba(234,160,176,0.05)", filter: "blur(60px)", pointerEvents: "none" }} />
         
@@ -160,7 +170,7 @@ export default function App() {
             <p style={{ color: "var(--color-amber)", fontSize: "0.75rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: "1rem" }}>
               Take the first step
             </p>
-            <h2 style={{ fontFamily: "var(--font-display)", fontWeight: 800, fontSize: "clamp(2.5rem,5vw,3.5rem)", lineHeight: 1, color: "white", textTransform: "uppercase", marginBottom: "1.5rem" }}>
+            <h2 style={{ fontFamily: "var(--font-display)", fontWeight: 200, fontSize: "clamp(2.3rem,3vw,3.3rem)", lineHeight: 1, color: "white", textTransform: "uppercase", marginBottom: "1.0rem" }}>
               Am I safe, or should I see a doctor?
             </h2>
             <p style={{ fontSize: "1rem", lineHeight: 1.8, color: "rgba(255,255,255,0.85)", marginBottom: "1rem" }}>
@@ -197,7 +207,7 @@ export default function App() {
             {/* Informational reassurance block */}
             <div style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "1.5rem", padding: "2rem" }} className="flex flex-col gap-6">
               <div className="flex gap-4 items-start">
-                <span style={{ fontSize: "1.5rem", background: "rgba(245,168,32,0.1)", padding: "0.5rem", borderRadius: "0.75rem", flexShrink: 0 }}>🔒</span>
+                {/* <span style={{ fontSize: "1.5rem", background: "rgba(245,168,32,0.1)", padding: "0.5rem", borderRadius: "0.75rem", flexShrink: 0 }}></span> */}
                 <div>
                   <h4 style={{ color: "white", fontWeight: 600, fontSize: "1.1rem", marginBottom: "0.25rem" }}>100% Private & Confidential</h4>
                   <p style={{ color: "rgba(255,255,255,0.65)", fontSize: "0.875rem", lineHeight: 1.5 }}>Your health metrics are processed anonymously. No credentials required.</p>
@@ -205,7 +215,7 @@ export default function App() {
               </div>
 
               <div className="flex gap-4 items-start">
-                <span style={{ fontSize: "1.5rem", background: "rgba(245,168,32,0.1)", padding: "0.5rem", borderRadius: "0.75rem", flexShrink: 0 }}>⏳</span>
+                {/* <span style={{ fontSize: "1.5rem", background: "rgba(245,168,32,0.1)", padding: "0.5rem", borderRadius: "0.75rem", flexShrink: 0 }}></span> */}
                 <div>
                   <h4 style={{ color: "white", fontWeight: 600, fontSize: "1.1rem", marginBottom: "0.25rem" }}>Quick Assessment</h4>
                   <p style={{ color: "rgba(255,255,255,0.65)", fontSize: "0.875rem", lineHeight: 1.5 }}>Takes less than 3 minutes to evaluate critical clinical benchmarks.</p>
@@ -213,7 +223,7 @@ export default function App() {
               </div>
 
               <div className="flex gap-4 items-start">
-                <span style={{ fontSize: "1.5rem", background: "rgba(245,168,32,0.1)", padding: "0.5rem", borderRadius: "0.75rem", flexShrink: 0 }}>📋</span>
+                {/* <span style={{ fontSize: "1.5rem", background: "rgba(245,168,32,0.1)", padding: "0.5rem", borderRadius: "0.75rem", flexShrink: 0 }}></span> */}
                 <div>
                   <h4 style={{ color: "white", fontWeight: 600, fontSize: "1.1rem", marginBottom: "0.25rem" }}>Actionable Report</h4>
                   <p style={{ color: "rgba(255,255,255,0.65)", fontSize: "0.875rem", lineHeight: 1.5 }}>Receive custom validation documentation to share with your personal healthcare physician.</p>
@@ -268,7 +278,7 @@ export default function App() {
         <div className="max-w-5xl mx-auto px-6 md:px-14">
           <div className="mb-12">
             <p style={{ color: "var(--color-amber)", fontSize: "0.75rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: "0.75rem" }}>Recognise the signs</p>
-            <h2 style={{ fontFamily: "var(--font-display)", fontWeight: 800, fontSize: "clamp(2.5rem,5vw,3.5rem)", color: "white", textTransform: "uppercase", lineHeight: 1 }}>
+            <h2 style={{ fontFamily: "var(--font-display)", fontWeight: 200, fontSize: "clamp(2.3rem,3vw,3.3rem)", color: "white", textTransform: "uppercase", lineHeight: 1 }}>
               Common Symptoms
             </h2>
           </div>
@@ -278,7 +288,7 @@ export default function App() {
                 onMouseEnter={e => (e.currentTarget.style.background = "rgba(245,168,32,0.15)")}
                 onMouseLeave={e => (e.currentTarget.style.background = "rgba(255,255,255,0.07)")}
               >
-                <span style={{ fontFamily: "var(--font-display)", fontWeight: 900, fontSize: "2.5rem", color: "var(--color-blush)", opacity: 0.4, display: "block", lineHeight: 1, marginBottom: "0.5rem" }}>0{i + 1}</span>
+                <span style={{ fontFamily: "var(--font-display)", fontWeight: 900, fontSize: "2.5rem", color: "var(--color-blush)", opacity: 0.4, display: "block", lineHeight: 1, marginBottom: "0.5rem" }}></span>
                 <h3 style={{ fontFamily: "var(--font-display)", fontWeight: 800, fontSize: "1.2rem", color: "white", textTransform: "uppercase", marginBottom: "0.5rem" }}>{s.label}</h3>
                 <p style={{ fontSize: "0.875rem", lineHeight: 1.7, color: "rgba(234,160,176,0.85)" }}>{s.detail}</p>
               </div>
@@ -290,8 +300,8 @@ export default function App() {
       {/* STAGES */}
       <section id="stages" style={{ background: "var(--color-offwhite)", padding: "5rem 0" }}>
         <div className="max-w-5xl mx-auto px-6 md:px-14">
-          <p style={{ color: "var(--color-crimson)", fontSize: "0.75rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: "0.75rem" }}>ASRM Classification</p>
-          <h2 style={{ fontFamily: "var(--font-display)", fontWeight: 800, fontSize: "clamp(2.5rem,5vw,3.5rem)", color: "var(--color-crimson)", textTransform: "uppercase", lineHeight: 1, marginBottom: "2.5rem" }}>
+          {/* <p style={{ color: "var(--color-crimson)", fontSize: "0.75rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: "0.75rem" }}>ASRM Classification</p> */}
+          <h2 style={{ fontFamily: "var(--font-display)", fontWeight: 200, fontSize: "clamp(2.5rem,3vw,3.5rem)", color: "var(--color-crimson)", textTransform: "uppercase", lineHeight: 1, marginBottom: "2.5rem" }}>
             The Four Stages
           </h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
@@ -301,7 +311,7 @@ export default function App() {
                 border: activeStage === i ? "2px solid var(--color-crimson)" : "2px solid #e0d0d4",
                 borderRadius: "0.875rem", padding: "1.25rem", textAlign: "left", cursor: "pointer", transition: "all 0.2s"
               }}>
-                <p style={{ fontFamily: "var(--font-display)", fontWeight: 900, fontSize: "2rem", color: activeStage === i ? "var(--color-amber)" : "var(--color-crimson)", lineHeight: 1 }}>Stage {s.num}</p>
+                <p style={{ fontFamily: "var(--font-display)", fontWeight: 400, fontSize: "2rem", color: activeStage === i ? "var(--color-amber)" : "var(--color-crimson)", lineHeight: 1 }}>Stage {s.num}</p>
                 <p style={{ fontSize: "0.8rem", fontWeight: 700, color: activeStage === i ? "var(--color-blush)" : "var(--color-crimson)", marginTop: "0.25rem", textTransform: "uppercase", letterSpacing: "0.05em" }}>{s.name}</p>
               </button>
             ))}
@@ -319,7 +329,7 @@ export default function App() {
       <section id="coping" style={{ background: "var(--color-charcoal)", padding: "5rem 0" }}>
         <div className="max-w-5xl mx-auto px-6 md:px-14">
           <p style={{ color: "var(--color-amber)", fontSize: "0.75rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: "0.75rem" }}>Daily management</p>
-          <h2 style={{ fontFamily: "var(--font-display)", fontWeight: 800, fontSize: "clamp(2.5rem,5vw,3.5rem)", color: "white", textTransform: "uppercase", lineHeight: 1, marginBottom: "2.5rem" }}>
+          <h2 style={{ fontFamily: "var(--font-display)", fontWeight: 200, fontSize: "clamp(2.5rem,3vw,3.5rem)", color: "white", textTransform: "uppercase", lineHeight: 1, marginBottom: "2.5rem" }}>
             Coping Strategies
           </h2>
           <div className="grid md:grid-cols-2 gap-3">
@@ -345,7 +355,7 @@ export default function App() {
       <section id="treatment" style={{ background: "var(--color-offwhite)", padding: "5rem 0" }}>
         <div className="max-w-5xl mx-auto px-6 md:px-14">
           <p style={{ color: "var(--color-crimson)", fontSize: "0.75rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: "0.75rem" }}>Medical options</p>
-          <h2 style={{ fontFamily: "var(--font-display)", fontWeight: 800, fontSize: "clamp(2.5rem,5vw,3.5rem)", color: "var(--color-crimson)", textTransform: "uppercase", lineHeight: 1, marginBottom: "2rem" }}>
+          <h2 style={{ fontFamily: "var(--font-display)", fontWeight: 200, fontSize: "clamp(2.5rem,3vw,3.5rem)", color: "var(--color-crimson)", textTransform: "uppercase", lineHeight: 1, marginBottom: "2rem" }}>
             Treatment Pathways
           </h2>
           <p style={{ fontSize: "1rem", lineHeight: 1.8, maxWidth: "560px", marginBottom: "2rem", color: "var(--color-charcoal)" }}>
@@ -377,7 +387,7 @@ export default function App() {
           </div>
           {/* Excision callout */}
           <div style={{ background: "var(--color-amber)", borderRadius: "1rem", padding: "1.5rem 2rem", marginTop: "1.5rem", display: "flex", gap: "1rem", alignItems: "center" }}>
-            <span style={{ fontSize: "2rem", flexShrink: 0 }}>⚡</span>
+            <span style={{ fontSize: "2rem", flexShrink: 0 }}></span>
             <p style={{ fontSize: "0.9rem", lineHeight: 1.7, color: "var(--color-crimson-dark)", fontWeight: 500 }}>
               <strong>Excision vs. Ablation:</strong> Excision removes lesions at the root and has significantly lower recurrence rates. Always ask your surgeon which technique they use.
             </p>
@@ -388,7 +398,7 @@ export default function App() {
       {/* TRACK YOUR SYMPTOMS — callout */}
       <section style={{ background: "var(--color-crimson)", padding: "4rem 0" }}>
         <div className="max-w-3xl mx-auto px-6 md:px-14 text-center">
-          <h2 style={{ fontFamily: "var(--font-display)", fontWeight: 900, fontSize: "clamp(2.5rem,6vw,4rem)", color: "white", textTransform: "uppercase", lineHeight: 1, marginBottom: "1rem" }}>
+          <h2 style={{ fontFamily: "var(--font-display)", fontWeight: 900, fontSize: "clamp(2.5rem,4vw,4rem)", color: "white", textTransform: "uppercase", lineHeight: 1, marginBottom: "1rem" }}>
             Track Before<br /><span style={{ color: "var(--color-amber)" }}>You Attend</span>
           </h2>
           <p style={{ fontSize: "1rem", lineHeight: 1.8, color: "rgba(255,255,255,0.8)", maxWidth: "480px", margin: "0 auto 2rem" }}>
@@ -407,7 +417,7 @@ export default function App() {
         <div className="max-w-5xl mx-auto px-6 md:px-14 grid md:grid-cols-2 gap-12">
           <div>
             <p style={{ color: "var(--color-amber)", fontSize: "0.75rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: "0.75rem" }}>You are not alone</p>
-            <h2 style={{ fontFamily: "var(--font-display)", fontWeight: 800, fontSize: "clamp(2.5rem,5vw,3.5rem)", color: "white", textTransform: "uppercase", lineHeight: 1, marginBottom: "1.5rem" }}>
+            <h2 style={{ fontFamily: "var(--font-display)", fontWeight: 800, fontSize: "clamp(2.5rem,3vw,3.5rem)", color: "white", textTransform: "uppercase", lineHeight: 1, marginBottom: "1.5rem" }}>
               Find Your Support
             </h2>
             <p style={{ fontSize: "1rem", lineHeight: 1.8, color: "rgba(255,255,255,0.7)", marginBottom: "2rem" }}>

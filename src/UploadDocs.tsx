@@ -135,7 +135,6 @@ export default function UploadDocs({ onBackToHome }: UploadDocsProps) {
             </div>
           </div>
         )}
-
         {/* Bottom Submission Action Trigger */}
         <div style={{ marginTop: "3rem", borderTop: "1px solid #f3f4f6", paddingTop: "1.5rem" }} className="flex justify-end">
           <button
@@ -158,7 +157,25 @@ export default function UploadDocs({ onBackToHome }: UploadDocsProps) {
             Attach Records to Profile ➔
           </button>
         </div>
-
+        {/* ⚠️ Independent Clinical Disclaimer for Document Uploads */}
+        <div 
+          style={{ 
+            marginTop: "24px", 
+            marginBottom: "24px",
+            padding: "16px", 
+            backgroundColor: "#fff5f5", 
+            borderLeft: "4px solid #bd4f6c", 
+            borderRadius: "6px",
+            color: "#4a5568",
+            fontSize: "0.85rem",
+            lineHeight: "1.5"
+          }}
+        >
+          <strong style={{ color: "#bd4f6c", display: "block", marginBottom: "6px", fontSize: "0.95rem" }}>
+            Medical Disclaimer
+          </strong>
+          <strong>This document upload feature is designed to compile context for your records and health assessments. It does not provide a formal or automated clinical diagnosis. Any shared documents should not replace professional medical evaluations. If you are experiencing urgent symptoms, please seek immediate medical assistance from a doctor or your local emergency room.</strong>
+        </div>
       </div>
     </div>
   );

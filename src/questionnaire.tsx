@@ -15,11 +15,21 @@ export default function Questionnaire({ onBackToHome }: QuestionnaireProps) {
       description: "This section establishes the timeline, cyclicity, and physiological presentation of pelvic pain.",
       questions: [
         {
-          id: "q1_scale",
-          type: "scale",
+          id: "q1_severity",
+          type: "radio",
           text: "1a. How severe is your menstrual pain on a scale of 1–10?",
-          minLabel: "1 (No pain)",
-          maxLabel: "10 (Worst imaginable)"
+          options: [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10"
+          ]
         },
         {
           id: "q1_med",
@@ -212,7 +222,7 @@ export default function Questionnaire({ onBackToHome }: QuestionnaireProps) {
       ]
     }
   ];
-
+    
   const handleRadioScaleChange = (questionId: string, value: any) => {
     setAnswers((prev) => ({ ...prev, [questionId]: value }));
   };
@@ -278,7 +288,7 @@ export default function Questionnaire({ onBackToHome }: QuestionnaireProps) {
             <p style={{ fontWeight: "bold", marginBottom: "10px" }}>{q.text}</p>
             
             {/* SCALE INPUT MATRIX */}
-            {q.type === "scale" && (
+            {/* {q.type === "scale" && (
               <div>
                 <input
                   type="range"
@@ -294,10 +304,26 @@ export default function Questionnaire({ onBackToHome }: QuestionnaireProps) {
                   <span>{q.maxLabel}</span>
                 </div>
               </div>
-            )}
-            
+            )} */}
+            {/* RADIO INPUT MATRIX question 1 */}
+            {q.type === "radio"  && q.id == "q1_severity" && q.options && (
+              <div style={{ display: "flex", flexDirection: "row", gap: "8px" }}>
+                {q.options.map((opt) => (
+                  <label key={opt} style={{ display: "flex", alignItems: "center", gap: "8px", cursor: "pointer" }}>
+                    <input
+                      type="radio"
+                      name={q.id}
+                      checked={answers[q.id] === opt}
+                      onChange={() => handleRadioScaleChange(q.id, opt)}
+                      style={{ accentColor: "#bd4f6c" }}
+                    />
+                    <span>{opt}</span>
+                  </label>
+                ))}
+              </div>
+            )}         
             {/* RADIO INPUT MATRIX */}
-            {q.type === "radio" && q.options && (
+            {q.type === "radio" && q.id !== "q1_severity" && q.options && (
               <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
                 {q.options.map((opt) => (
                   <label key={opt} style={{ display: "flex", alignItems: "center", gap: "8px", cursor: "pointer" }}>
@@ -352,7 +378,15 @@ export default function Questionnaire({ onBackToHome }: QuestionnaireProps) {
           </div>
         ))}
       </div>
-      
+              {/* ⚠️ Only displays if the user is on the 4th section (index 3) */}
+        {currentStep === 3 && (
+          <div style={{ marginTop: "24px", marginBottom: "24px", padding: "16px", backgroundColor: "#fff5f5", borderLeft: "4px solid #bd4f6c", borderRadius: "6px", color: "#4a5568", fontSize: "0.85rem", lineHeight: "1.5" }}>
+            <strong style={{ color: "#bd4f6c", display: "block", marginBottom: "6px", fontSize: "0.95rem" }}>
+              Medical Disclaimer
+            </strong>
+            <strong>This assessment tool is for informational purposes only and does not provide a formal medical diagnosis. The information gathered here should not replace professional medical advice, diagnosis, or treatment. If you are experiencing severe symptoms or a medical emergency, please seek immediate medical assistance from a qualified healthcare professional.</strong>
+          </div>
+        )}  
       {/* NAVIGATION CONTROLS */}
       <div style={{ display: "flex", justifyContent: "space-between", marginTop: "30px" }}>
         <button
