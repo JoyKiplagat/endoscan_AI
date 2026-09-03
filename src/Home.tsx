@@ -21,12 +21,12 @@ const STAGES = [
 ];
 
 const COPING = [
-  {  title: "Heat therapy", body: "A heating pad for 15–20 min relaxes uterine muscles and cuts cramping. One of the simplest and most effective tools." },
-  {  title: "Anti-inflammatory diet", body: "More oily fish, greens, and fibre. Less processed food and alcohol. Reducing inflammation systemically can ease symptoms." },
-  {  title: "Gentle movement", body: "Yoga, swimming, and walking ease pain and lift mood. Skip high-intensity sessions during flares." },
-  {  title: "Pelvic physiotherapy", body: "A specialist physio can relieve the muscle tension that amplifies endometriosis pain — often overlooked and highly effective." },
-  {  title: "Symptom tracking", body: "Log pain (0–10), location, diet, and cycle for 2+ cycles. Patterns emerge and your clinician gets better data." },
-  {  title: "Community support", body: "Connecting with others who understand — online or in-person — reduces isolation and surfaces practical strategies." },
+  { title: "Heat therapy", icon: "🔥", body: "A heating pad for 15–20 min relaxes uterine muscles and cuts cramping. One of the simplest and most effective tools." },
+  { title: "Anti-inflammatory diet", icon: "🥗", body: "More oily fish, greens, and fibre. Less processed food and alcohol. Reducing inflammation systemically can ease symptoms." },
+  { title: "Gentle movement", icon: "🧘‍♀️", body: "Yoga, swimming, and walking ease pain and lift mood. Skip high-intensity sessions during flares." },
+  { title: "Pelvic physiotherapy", icon: "🩺", body: "A specialist physio can relieve the muscle tension that amplifies endometriosis pain — often overlooked and highly effective." },
+  { title: "Symptom tracking", icon: "📅", body: "Log pain (0–10), location, diet, and cycle for 2+ cycles. Patterns emerge and your clinician gets better data." },
+  { title: "Community support", icon: "💬", body: "Connecting with others who understand — online or in-person — reduces isolation and surfaces practical strategies." },
 ];
 
 const TREATMENTS = [
@@ -59,89 +59,206 @@ export default function App() {
 
   return (
     <div style={{ background: "var(--color-offwhite)", color: "var(--color-charcoal)", fontFamily: "var(--font-body)" }}>
+      
+      {/* NAVIGATION */}
+      <nav style={{ background: 'var(--color-crimson)' }} className="sticky top-0 z-50 flex items-center justify-between px-6 md:px-14 py-4 border-b border-[rgba(255,255,255,0.1)] shadow-md">
+        <span style={{ fontFamily: 'var(--font-display)', color: 'var(--color-blush)', fontSize: '1.5rem', fontWeight: 800, letterSpacing: '0.05em' }}> 
+          HER MATTERS 
+        </span> 
+        <div className="hidden md:flex gap-8"> 
+          {[
+            { label: 'Home', href: '#Home' }, 
+            { label: 'About', href: '#about' },                
+            { label: 'Stages', href: '#stages' }, 
+            { label: 'Treatment', href: '#treatment' }, 
+            { label: 'Support', href: '#support' },
+            { label: 'Sign In', href: '/auth' }
+          ].map((l) => ( 
+            <a 
+              key={l.label} 
+              href={l.href} 
+              style={{ color: 'rgba(234,160,176,0.8)', fontSize: '0.8rem', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', textDecoration: 'none', transition: 'color 0.2s ease' }} 
+              onMouseEnter={e => (e.currentTarget.style.color = 'var(--color-blush)')} 
+              onMouseLeave={e => (e.currentTarget.style.color = 'rgba(234,160,176,0.8)')} 
+            >
+              {l.label}
+            </a> 
+          ))} 
+        </div> 
+      </nav>
 
-          <nav style={{ background: 'var(--color-crimson)' }} className="sticky top-0 z-50 flex items-center justify-between px-6 md:px-14 py-4">
-            <span style={{ fontFamily: 'var(--font-display)', color: 'var(--color-blush)', fontSize: '1.5rem', fontWeight: 800, letterSpacing: '0.05em' }}> 
-              HER MATTERS 
-            </span> 
-            <div className="hidden md:flex gap-8"> 
-              {[
-                { label: 'Home', href: '#Home' }, 
-                { label: 'About', href: '#about' },                
-                { label: 'Stages', href: '#stages' }, 
-                { label: 'Treatment', href: '#treatment' }, 
-                { label: 'Support', href: '#support' },
-                { label: 'Sign In', href: '/auth' }
-              ].map((l) => ( 
-                <a 
-                  key={l.label} 
-                  href={l.href} 
-                  style={{ color: 'rgba(234,160,176,0.8)', fontSize: '0.8rem', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', textDecoration: 'none' }} 
-                  onMouseEnter={e => (e.currentTarget.style.color = 'var(--color-blush)')} 
-                  onMouseLeave={e => (e.currentTarget.style.color = 'rgba(234,160,176,0.8)')} 
-                >
-                  {l.label}
-                </a> 
-              ))} 
-            </div> 
-          </nav>
-
-      {/* HERO */}
-      <section id="Home" className="relative overflow-hidden min-h-[90vh] flex flex-col md:flex-row">
-        {/* Left — brand image */}
-          <div className="w-full md:w-2/5 relative min-h-[40vh] md:min-h-[90vh]">
-          <img src={brandImg} alt="Her Matters brand identity" className="absolute inset-0 w-full h-full object-cover" />
-        </div>
-        {/* Right — headline */}
-        <div className="md:w-3/5 flex flex-col justify-center px-8 md:px-16 py-16" style={{ background: "var(--color-crimson)" }}>
-          {/* <p style={{ color: "var(--color-amber)", fontSize: "0.75rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: "1.5rem" }}>
-          </p> */}
-          <h1 style={{ fontFamily: "var(--font-display)", fontWeight: 900, fontSize: "clamp(3.5rem, 5vw, 6.5rem)", lineHeight: 0.95, color: "white", marginBottom: "0.5rem", textTransform: "uppercase" }}>
-            Endometriosis:<br />
-            <span style={{ color: "var(--color-blush)" }}>Know It.<br />Own It.</span>
-          </h1>
-          <p style={{ color: "rgba(255,255,255,0.75)", fontSize: "1.1rem", lineHeight: 1.9, maxWidth: "420px", marginBottom: "2.5rem" }}>
-            190 million people live with endometriosis worldwide — yet diagnosis takes an average of <strong style={{ color: "var(--color-amber)" }}>7–10 years</strong>. This guide gives you the knowledge to advocate for yourself.
+      {/* HERO SECTION (FORMER ABOUT SECTION) */}
+      <section id="Home" className="relative overflow-hidden min-h-[90vh] flex flex-col lg:flex-row items-stretch" style={{ background: "var(--color-crimson)" }}>
+        {/* Background visual blur anchor */}
+        <div style={{ position: "absolute", top: "-10%", right: "-10%", width: "500px", height: "300px", borderRadius: "50%", background: "rgba(245,168,32,0.08)", filter: "blur(80px)", pointerEvents: "none" }} />
+        
+        {/* Left Column — High Impact Value Proposition */}
+        <div className="w-full lg:w-7/12 flex flex-col justify-center px-8 md:px-16 py-16 z-10">
+          <p style={{ color: "var(--color-amber)", fontSize: "0.8rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: "1.25rem" }}>
+            
           </p>
-          <div className="flex flex-wrap gap-3">
-            <a href="#symptoms" style={{ background: "var(--color-amber)", color: "var(--color-crimson-dark)", fontWeight: 700, fontSize: "0.875rem", padding: "0.85rem 2rem", borderRadius: "9999px", textDecoration: "none", letterSpacing: "0.05em" }}>
-              See the symptoms →
+          <h1 style={{ fontFamily: "var(--font-display)", fontWeight: 400, fontSize: "clamp(2.8rem, 3.5vw, 5.5rem)", lineHeight: 0.95, color: "white", marginBottom: "1.5rem", textTransform: "uppercase" }}>
+            Am I Safe, Or Should I <br />
+            <span style={{ color: "var(--color-blush)" }}>See a Doctor?</span>
+          </h1>
+          <p style={{ color: "rgba(255,255,255,0.75)", fontSize: "1.1rem", lineHeight: 1.8, maxWidth: "580px", marginBottom: "1.5rem" }}>
+            Endometriosis symptoms vary drastically from person to person, causing diagnosis to take an average of <strong style={{ color: "var(--color-amber)" }}>7–10 years</strong>. Recognizing your patterns early saves years of silent frustration.
+          </p>
+          <p style={{ color: "rgba(255,255,255,0.75)", fontSize: "1rem", lineHeight: 1.8, maxWidth: "580px", marginBottom: "1.5rem" }}>
+            Our data-backed screening questionnaire evaluates your cycle signals, pain levels, and lifestyle markers against verified clinical indicators to map out your health path.
+          </p>
+          
+          <div className="flex flex-wrap gap-4">
+            <a 
+              href="/questionnaire" 
+              style={{ 
+                background: "var(--color-amber)", 
+                color: "var(--color-crimson-dark)", 
+                fontWeight: 600, 
+                fontSize: "1rem", 
+                padding: "1.1rem 1.0rem", 
+                borderRadius: "9999px", 
+                textDecoration: "none", 
+                letterSpacing: "0.04em",
+                boxShadow: "0 4px 14px rgba(245,168,32,0.3)",
+                transition: "all 0.2s ease"
+              }}
+              onMouseEnter={e => {
+                e.currentTarget.style.transform = "translateY(-2px)";
+                e.currentTarget.style.boxShadow = "0 6px 20px rgba(245,168,32,0.4)";
+              }}
+              onMouseLeave={e => {
+                e.currentTarget.style.transform = "translateY(0)";
+                e.currentTarget.style.boxShadow = "0 4px 14px rgba(245,168,32,0.3)";
+              }}
+            >
+              Start screening questionnaire →
             </a>
-            <a href="#coping" style={{ border: "2px solid var(--color-blush)", color: "var(--color-blush)", fontWeight: 700, fontSize: "0.875rem", padding: "0.85rem 2rem", borderRadius: "9999px", textDecoration: "none", letterSpacing: "0.05em" }}>
-              Coping strategies
+            <a 
+              href="#about" 
+              style={{ 
+                border: "2px solid var(--color-blush)", 
+                color: "var(--color-blush)", 
+                fontWeight: 600, 
+                fontSize: "1rem", 
+                padding: "1.1rem 1.6rem", 
+                borderRadius: "9999px", 
+                textDecoration: "none", 
+                letterSpacing: "0.03em",
+                transition: "all 0.2s ease"
+              }}
+              onMouseEnter={e => (e.currentTarget.style.background = "rgba(234,160,176,0.1)")}
+              onMouseLeave={e => (e.currentTarget.style.background = "transparent")}
+            >
+              Learn about Endometriosis
             </a>
-
           </div>
-          {/* Stats row */}
-          <div className="flex gap-8 mt-10 pt-8" style={{ borderTop: "1px solid rgba(255,255,255,0.15)" }}>
-            {[["1 in 10", "people assigned female at birth"], ["7–10 yrs", "average diagnosis delay"], ["#2", "cause of female infertility"]].map(([val, label]) => (
+
+          {/* Quick Metrics Bar */}
+          <div className="flex gap-8 mt-12 pt-8" style={{ borderTop: "1px solid rgba(255,255,255,0.15)" }}>
+            {[["1 in 10", "assigned female at birth"], ["7–10 yrs", "average diagnosis delay"], ["#2", "cause of infertility"]].map(([val, label]) => (
               <div key={label}>
-                <p style={{ fontFamily: "var(--font-display)", fontWeight: 800, fontSize: "1.5rem", color: "var(--color-amber)" }}>{val}</p>
-                <p style={{ fontSize: "0.7rem", color: "rgba(255,255,255,0.55)", lineHeight: 1.0, maxWidth: "80px" }}>{label}</p>
+                <p style={{ fontFamily: "var(--font-display)", fontWeight: 800, fontSize: "1.6rem", color: "var(--color-amber)", marginBottom: "0.25rem" }}>{val}</p>
+                <p style={{ fontSize: "0.75rem", color: "rgba(255,255,255,0.6)", lineHeight: 1.2, maxWidth: "100px" }}>{label}</p>
               </div>
             ))}
           </div>
         </div>
+
+        {/* Right Column — Cards & Diagnostic Intake */}
+        <div className="w-full lg:w-5/12 flex flex-col justify-center px-6 md:px-12 py-16 bg-[rgba(0,0,0,0.15)] z-10 gap-4">
+          {/* Trust Reassurance Cards */}
+          <div style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: "1.5rem", padding: "1.1rem" }} className="flex flex-col gap-5">
+            <div className="flex gap-4 items-start">
+              {/* <span className="p-2 rounded-xl flex-shrink-0" style={{ background: "rgba(245,168,32,0.1)" }}>
+                <svg width="20" height="20" fill="var(--color-amber)" viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
+              </span> */}
+              <div>
+                <h4 style={{ color: "white", fontWeight: 200, fontSize: "1.05rem", marginBottom: "0.15rem" }}>100% Private & Confidential</h4>
+                <p style={{ color: "rgba(255,255,255,0.65)", fontSize: "0.875rem", lineHeight: 1.4 }}>Your health metrics are processed anonymously without credentials.</p>
+              </div>
+            </div>
+
+            <div className="flex gap-4 items-start">
+              {/* <span className="p-2 rounded-xl flex-shrink-0" style={{ background: "rgba(245,168,32,0.1)" }}>
+                <svg width="20" height="20" fill="var(--color-amber)" viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zm3.3 14.71L11 12.41V7h2v4.59l3.71 3.71-1.42 1.41z"/></svg>
+              </span> */}
+              <div>
+                <h4 style={{ color: "white", fontWeight: 200, fontSize: "1.05rem", marginBottom: "0.15rem" }}>Quick Assessment</h4>
+                <p style={{ color: "rgba(255,255,255,0.65)", fontSize: "0.875rem", lineHeight: 1.4 }}>Takes less than 3 minutes to crosscheck critical clinical benchmarks.</p>
+              </div>
+            </div>
+
+            <div className="flex gap-4 items-start">
+              {/* <span className="p-2 rounded-xl flex-shrink-0" style={{ background: "rgba(245,168,32,0.1)" }}>
+                <svg width="20" height="20" fill="var(--color-amber)" viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+              </span> */}
+              <div>
+                <h4 style={{ color: "white", fontWeight: 200, fontSize: "1.05rem", marginBottom: "0.15rem" }}>Actionable Reports</h4>
+                <p style={{ color: "rgba(255,255,255,0.65)", fontSize: "0.875rem", lineHeight: 1.4 }}>Receive a customized validator summary log to present directly to your physician.</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Secure Document Intake Panel */}
+          <div style={{ background: "rgba(255,255,255,0.02)", border: "1px dashed rgba(255,255,255,0.2)", borderRadius: "1.5rem", padding: "1.5rem 1.75rem" }}>
+            <div className="flex items-center justify-between mb-2">
+              <h4 style={{ color: "white", fontSize: "1rem", fontWeight: 400 }}>Already have imaging reports?</h4>
+              <span style={{ color: "var(--color-amber)", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em", background: "rgba(245,168,32,0.15)", padding: "0.25rem 0.5rem", borderRadius: "0.25rem" }}>Optional</span>
+            </div>
+            <p style={{ color: "rgba(255,255,255,0.65)", fontSize: "0.875rem", lineHeight: 1.5, marginBottom: "1.25rem" }}>
+              Upload your ultrasound scans or pelvic MRI records so our system can read them and explain your results in simple language.
+            </p>
+            <a 
+              href="/upload-docs" 
+              style={{ 
+                background: "transparent", 
+                color: "var(--color-blush)", 
+                border: "2px solid var(--color-blush)",
+                fontWeight: 700, 
+                fontSize: "0.875rem", 
+                padding: "0.75rem 1.75rem", 
+                borderRadius: "9999px", 
+                textDecoration: "none", 
+                letterSpacing: "0.05em",
+                display: "inline-block",
+                transition: "all 0.2s ease"
+              }}
+              onMouseEnter={e => {
+                e.currentTarget.style.transform = "scale(1.02)";
+                e.currentTarget.style.background = "var(--color-blush)";
+                e.currentTarget.style.color = "var(--color-crimson-dark)";
+              }}
+              onMouseLeave={e => {
+                e.currentTarget.style.transform = "scale(1)";
+                e.currentTarget.style.background = "transparent";
+                e.currentTarget.style.color = "var(--color-blush)";
+              }}
+            >
+              Upload pelvic scans or MRI →
+            </a>
+          </div>
+        </div>
       </section>
 
-      {/* WHAT IS IT */}
-      <section style={{ background: "var(--color-offwhite)", padding: "5rem 0" }}>
-        <div className="max-w-5xl mx-auto px-6 md:px-14 grid md:grid-cols-2 gap-12 items-center">
+      {/* WHAT IS IT CONTEXT SECTION */}
+      <section id="about" style={{ background: "var(--color-offwhite)", padding: "5rem 0" }}>
+        <div className=" max-w-5xl mx-auto px-6 md:px-14 grid md:grid-cols-2 gap-12 items-stretch">
           <div>
-            <p style={{ color: "var(--color-crimson)", fontSize: "0.75rem", fontWeight: 100, letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: "1rem" }}>What is it?</p>
-            <h2 style={{ fontFamily: "var(--font-display)", fontWeight: 200, fontSize: "clamp(2.5rem,3vw,3.5rem)", lineHeight: 1, color: "var(--color-crimson)", textTransform: "uppercase", marginBottom: "1.5rem" }}>
+            {/* <p style={{ color: "var(--color-crimson)", fontSize: "0.75rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: "1rem" }}>The Medical Context</p> */}
+            <h2 style={{ fontFamily: "var(--font-display)", fontWeight: 400, fontSize: "clamp(2.2rem,3vw,3.2rem)", lineHeight: 1.05, color: "var(--color-crimson)", textTransform: "uppercase", marginBottom: "1.5rem" }}>
               Tissue that grows where it shouldn't
             </h2>
             <p style={{ fontSize: "1rem", lineHeight: 1.8, color: "var(--color-charcoal)", marginBottom: "1rem" }}>
-              Endometriosis is a chronic inflammatory condition where tissue <em>similar</em> to the uterine lining grows outside the uterus — on ovaries, fallopian tubes, the pelvic lining, and beyond.
+              Endometriosis is a chronic inflammatory condition where tissue <em>similar</em> to the uterine lining grows outside the uterus — on ovaries, fallopian tubes, and the pelvic lining.
             </p>
-            <p style={{ fontSize: "1rem", lineHeight: 1.8, color: "var(--color-charcoal)", marginBottom: "1rem" }}>
-              Each month it swells and bleeds with your cycle — but unlike the uterine lining, it has nowhere to go. This causes inflammation, scarring (adhesions), and cysts on the ovaries (endometriomas).
+            <p style={{ fontSize: "1rem", lineHeight: 1.8, color: "var(--color-charcoal)", marginBottom: "1.5rem" }}>
+              Each month it swells and bleeds with your cycle — but unlike the uterine lining, it has nowhere to go. This leaves behind persistent inflammation, scar tissue (adhesions), and deep lesions.
             </p>
-            <div style={{ background: "var(--color-crimson)", color: "white", borderRadius: "1rem", padding: "1.25rem 1.5rem", display: "inline-flex", gap: "1rem", alignItems: "flex-start", marginTop: "0.5rem" }}>
-              <span style={{ fontSize: "1.5rem", flexShrink: 0 }}></span>
+            <div style={{ background: "var(--color-crimson)", color: "white", borderRadius: "1rem", padding: "1.25rem 1.5rem", display: "inline-flex", gap: "1rem", alignItems: "flex-start" }}>
+              <span className="mt-1"></span>
               <p style={{ fontSize: "0.875rem", lineHeight: 1.7 }}>
-                <strong style={{ color: "var(--color-amber)" }}>Pain severity ≠ disease severity.</strong> You can have Stage IV endometriosis with little pain, or Stage I with debilitating pain. Never let anyone dismiss you.
+                <strong style={{ color: "var(--color-amber)" }}>Pain severity ≠ disease severity.</strong> You can have Stage IV disease with minor pain, or Stage I with debilitating pain. Never let your lived tracking metrics be dismissed.
               </p>
             </div>
           </div>
@@ -149,158 +266,45 @@ export default function App() {
             <img
               src={flowerImg}
               alt="Women's health awareness — red flower"
-              className="w-full rounded-2xl object-cover"
-              style={{ aspectRatio: "4/5", filter: "saturate(0.9)" }}
+              className="w-full rounded-2xl object-cover shadow-xl"
+              style={{ aspectRatio: "4/5", filter: "saturate(0.95)" }}
             />
-            <div style={{ position: "absolute", bottom: "-1rem", left: "-1rem", background: "var(--color-amber)", borderRadius: "1rem", padding: "1rem 1.5rem" }}>
+            <div style={{ position: "absolute", bottom: "-1rem", left: "-1rem", background: "var(--color-amber)", borderRadius: "1rem", padding: "1rem 1.5rem", boxShadow: "0 10px 25px rgba(0,0,0,0.1)" }}>
               <p style={{ fontFamily: "var(--font-display)", fontWeight: 800, fontSize: "1.25rem", color: "var(--color-crimson-dark)", lineHeight: 1.1 }}>Chronic.<br />Manageable.</p>
             </div>
           </div>
         </div>
       </section>
-      {/* SCREENING SYSTEM CTA */}
-      <section id= "about" style={{ background: "var(--color-crimson)", padding: "4rem 0", overflow: "hidden" }} className="relative">
-        {/* Background visual anchor */}
-        <div style={{ position: "absolute", top: "-10%", right: "-10%", width: "400px", height: "400px", borderRadius: "50%", background: "rgba(234,160,176,0.05)", filter: "blur(60px)", pointerEvents: "none" }} />
-        
-        <div className="max-w-5xl mx-auto px-6 md:px-14 grid md:grid-cols-2 gap-12 items-center">
-          
-          {/* Left Column — Text & Main Button */}
-          <div>
-            <p style={{ color: "var(--color-amber)", fontSize: "0.75rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: "1rem" }}>
-              Take the first step
-            </p>
-            <h2 style={{ fontFamily: "var(--font-display)", fontWeight: 200, fontSize: "clamp(2.3rem,3vw,3.3rem)", lineHeight: 1, color: "white", textTransform: "uppercase", marginBottom: "1.0rem" }}>
-              Am I safe, or should I see a doctor?
-            </h2>
-            <p style={{ fontSize: "1rem", lineHeight: 1.8, color: "rgba(255,255,255,0.85)", marginBottom: "1rem" }}>
-              Because endometriosis symptoms vary drastically from person to person, diagnosis is frequently delayed. Recognizing your personal patterns early can save you years of silent frustration.
-            </p>
-            <p style={{ fontSize: "1rem", lineHeight: 1.8, color: "rgba(255,255,255,0.85)", marginBottom: "2.5rem" }}>
-              Our data-backed screening questionnaire evaluates your cycle signals, pain levels, and lifestyle markers against verified clinical indicators to map out your risk path.
-            </p>
-            
-            {/* The Link Button to your question page */}
-            <a 
-              href="/questionnaire" 
-              style={{ 
-                background: "var(--color-amber)", 
-                color: "var(--color-crimson-dark)", 
-                fontWeight: 700, 
-                fontSize: "0.95rem", 
-                padding: "1rem 2.5rem", 
-                borderRadius: "9999px", 
-                textDecoration: "none", 
-                letterSpacing: "0.05em",
-                display: "inline-block",
-                transition: "transform 0.2s ease"
-              }}
-              onMouseEnter={e => (e.currentTarget.style.transform = "scale(1.03)")}
-              onMouseLeave={e => (e.currentTarget.style.transform = "scale(1)")}
-            >
-              Start screening questionnaire →
-            </a>
-          </div>
 
-          {/* Right Column — Trust Cards & Upload Section */}
-          <div className="flex flex-col gap-6">
-            {/* Informational reassurance block */}
-            <div style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "1.5rem", padding: "2rem" }} className="flex flex-col gap-6">
-              <div className="flex gap-4 items-start">
-                {/* <span style={{ fontSize: "1.5rem", background: "rgba(245,168,32,0.1)", padding: "0.5rem", borderRadius: "0.75rem", flexShrink: 0 }}></span> */}
-                <div>
-                  <h4 style={{ color: "white", fontWeight: 600, fontSize: "1.1rem", marginBottom: "0.25rem" }}>100% Private & Confidential</h4>
-                  <p style={{ color: "rgba(255,255,255,0.65)", fontSize: "0.875rem", lineHeight: 1.5 }}>Your health metrics are processed anonymously. No credentials required.</p>
-                </div>
-              </div>
-
-              <div className="flex gap-4 items-start">
-                {/* <span style={{ fontSize: "1.5rem", background: "rgba(245,168,32,0.1)", padding: "0.5rem", borderRadius: "0.75rem", flexShrink: 0 }}></span> */}
-                <div>
-                  <h4 style={{ color: "white", fontWeight: 600, fontSize: "1.1rem", marginBottom: "0.25rem" }}>Quick Assessment</h4>
-                  <p style={{ color: "rgba(255,255,255,0.65)", fontSize: "0.875rem", lineHeight: 1.5 }}>Takes less than 3 minutes to evaluate critical clinical benchmarks.</p>
-                </div>
-              </div>
-
-              <div className="flex gap-4 items-start">
-                {/* <span style={{ fontSize: "1.5rem", background: "rgba(245,168,32,0.1)", padding: "0.5rem", borderRadius: "0.75rem", flexShrink: 0 }}></span> */}
-                <div>
-                  <h4 style={{ color: "white", fontWeight: 600, fontSize: "1.1rem", marginBottom: "0.25rem" }}>Actionable Report</h4>
-                  <p style={{ color: "rgba(255,255,255,0.65)", fontSize: "0.875rem", lineHeight: 1.5 }}>Receive custom validation documentation to share with your personal healthcare physician.</p>
-                </div>
-              </div>
-            </div>
-
-            {/* 🎯 OPTIONAL SCAN & MRI UPLOAD BOX BELOW CARDS */}
-            <div style={{ background: "rgba(255,255,255,0.02)", border: "1px dashed rgba(255,255,255,0.2)", borderRadius: "1.5rem", padding: "1.5rem 2rem" }}>
-              <div className="flex items-center justify-between mb-2">
-                <h4 style={{ color: "white", fontSize: "1rem", fontWeight: 600 }}>Already have imaging reports?</h4>
-                <span style={{ color: "var(--color-amber)", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em", background: "rgba(245,168,32,0.1)", padding: "0.25rem 0.5rem", borderRadius: "0.25rem" }}>Optional</span>
-              </div>
-              <p style={{ color: "rgba(255,255,255,0.65)", fontSize: "0.875rem", lineHeight: 1.5, marginBottom: "1.25rem" }}>
-                You can securely attach your transvaginal ultrasound or pelvic MRI records directly to your private profile summary.
-              </p>
-              <a 
-                href="/upload-docs" 
-                style={{ 
-                  background: "transparent", 
-                  color: "var(--color-blush)", 
-                  border: "2px solid var(--color-blush)",
-                  fontWeight: 700, 
-                  fontSize: "0.875rem", 
-                  padding: "0.75rem 1.75rem", 
-                  borderRadius: "9999px", 
-                  textDecoration: "none", 
-                  letterSpacing: "0.05em",
-                  display: "inline-block",
-                  transition: "all 0.2s ease"
-                }}
-                onMouseEnter={e => {
-                  e.currentTarget.style.transform = "scale(1.02)";
-                  e.currentTarget.style.background = "var(--color-blush)";
-                  e.currentTarget.style.color = "var(--color-crimson-dark)";
-                }}
-                onMouseLeave={e => {
-                  e.currentTarget.style.transform = "scale(1)";
-                  e.currentTarget.style.background = "transparent";
-                  e.currentTarget.style.color = "var(--color-blush)";
-                }}
-              >
-                Upload pelvic scans or MRI →
-              </a>
-            </div>
-          </div>
-
-        </div>
-      </section>
-      {/* SYMPTOMS */}
-      <section id="symptoms" style={{ background: "var(--color-crimson)", padding: "5rem 0" }}>
+      {/* SYMPTOMS MARKEY */}
+      <section id="symptoms" style={{ background: "var(--color-crimson)", padding: "2rem 0" }}>
         <div className="max-w-5xl mx-auto px-6 md:px-14">
           <div className="mb-12">
-            <p style={{ color: "var(--color-amber)", fontSize: "0.75rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: "0.75rem" }}>Recognise the signs</p>
+            {/* <p style={{ color: "var(--color-amber)", fontSize: "0.75rem", fontWeight: 400, letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: "0.75rem" }}>Recognise the signs</p> */}
             <h2 style={{ fontFamily: "var(--font-display)", fontWeight: 200, fontSize: "clamp(2.3rem,3vw,3.3rem)", color: "white", textTransform: "uppercase", lineHeight: 1 }}>
               Common Symptoms
             </h2>
           </div>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
             {SYMPTOMS.map((s, i) => (
-              <div key={s.label} style={{ background: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.12)", borderRadius: "1rem", padding: "1.5rem", transition: "background 0.2s" }}
-                onMouseEnter={e => (e.currentTarget.style.background = "rgba(245,168,32,0.15)")}
-                onMouseLeave={e => (e.currentTarget.style.background = "rgba(255,255,255,0.07)")}
+              <div key={s.label} style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "1rem", padding: "1.75rem", transition: "all 0.2s" }}
+                onMouseEnter={e => (e.currentTarget.style.background = "rgba(245,168,32,0.12)")}
+                onMouseLeave={e => (e.currentTarget.style.background = "rgba(255,255,255,0.06)")}
               >
-                <span style={{ fontFamily: "var(--font-display)", fontWeight: 900, fontSize: "2.5rem", color: "var(--color-blush)", opacity: 0.4, display: "block", lineHeight: 1, marginBottom: "0.5rem" }}></span>
-                <h3 style={{ fontFamily: "var(--font-display)", fontWeight: 800, fontSize: "1.2rem", color: "white", textTransform: "uppercase", marginBottom: "0.5rem" }}>{s.label}</h3>
-                <p style={{ fontSize: "0.875rem", lineHeight: 1.7, color: "rgba(234,160,176,0.85)" }}>{s.detail}</p>
+                {/* <span style={{ fontFamily: "var(--font-display)", fontWeight: 900, fontSize: "2rem", color: "var(--color-amber)", display: "block", marginBottom: "0.5rem" }}>
+                  0{i + 1}
+                </span> */}
+                <h3 style={{ fontFamily: "var(--font-display)", fontWeight: 100, fontSize: "1.2rem", color: "white", textTransform: "uppercase", marginBottom: "0.5rem", letterSpacing: "0.02em" }}>{s.label}</h3>
+                <p style={{ fontSize: "0.875rem", lineHeight: 1.6, color: "rgba(234,160,176,0.9)" }}>{s.detail}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* STAGES */}
+      {/* STAGES CONTAINER */}
       <section id="stages" style={{ background: "var(--color-offwhite)", padding: "5rem 0" }}>
         <div className="max-w-5xl mx-auto px-6 md:px-14">
-          {/* <p style={{ color: "var(--color-crimson)", fontSize: "0.75rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: "0.75rem" }}>ASRM Classification</p> */}
           <h2 style={{ fontFamily: "var(--font-display)", fontWeight: 200, fontSize: "clamp(2.5rem,3vw,3.5rem)", color: "var(--color-crimson)", textTransform: "uppercase", lineHeight: 1, marginBottom: "2.5rem" }}>
             The Four Stages
           </h2>
@@ -312,12 +316,12 @@ export default function App() {
                 borderRadius: "0.875rem", padding: "1.25rem", textAlign: "left", cursor: "pointer", transition: "all 0.2s"
               }}>
                 <p style={{ fontFamily: "var(--font-display)", fontWeight: 400, fontSize: "2rem", color: activeStage === i ? "var(--color-amber)" : "var(--color-crimson)", lineHeight: 1 }}>Stage {s.num}</p>
-                <p style={{ fontSize: "0.8rem", fontWeight: 700, color: activeStage === i ? "var(--color-blush)" : "var(--color-crimson)", marginTop: "0.25rem", textTransform: "uppercase", letterSpacing: "0.05em" }}>{s.name}</p>
+                <p style={{ fontSize: "0.8rem", fontWeight: 400, color: activeStage === i ? "var(--color-blush)" : "var(--color-crimson)", marginTop: "0.25rem", textTransform: "uppercase", letterSpacing: "0.05em" }}>{s.name}</p>
               </button>
             ))}
           </div>
-          <div style={{ background: "var(--color-crimson)", borderRadius: "1rem", padding: "2rem" }}>
-            <h3 style={{ fontFamily: "var(--font-display)", fontWeight: 800, fontSize: "1.75rem", color: "white", textTransform: "uppercase", marginBottom: "0.75rem" }}>
+          <div style={{ background: "var(--color-crimson)", borderRadius: "1rem", padding: "2rem", boxShadow: "0 10px 30px rgba(124,26,53,0.15)" }}>
+            <h3 style={{ fontFamily: "var(--font-display)", fontWeight: 400, fontSize: "1.45rem", color: "white", textTransform: "uppercase", marginBottom: "0.75rem" }}>
               Stage {STAGES[activeStage].num} — {STAGES[activeStage].name}
             </h3>
             <p style={{ fontSize: "1rem", lineHeight: 1.8, color: "var(--color-blush)" }}>{STAGES[activeStage].desc}</p>
@@ -325,24 +329,24 @@ export default function App() {
         </div>
       </section>
 
-      {/* COPING */}
+      {/* COPING STRATEGIES */}
       <section id="coping" style={{ background: "var(--color-charcoal)", padding: "5rem 0" }}>
         <div className="max-w-5xl mx-auto px-6 md:px-14">
-          <p style={{ color: "var(--color-amber)", fontSize: "0.75rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: "0.75rem" }}>Daily management</p>
+          {/* <p style={{ color: "var(--color-amber)", fontSize: "0.75rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: "0.75rem" }}>Daily management</p> */}
           <h2 style={{ fontFamily: "var(--font-display)", fontWeight: 200, fontSize: "clamp(2.5rem,3vw,3.5rem)", color: "white", textTransform: "uppercase", lineHeight: 1, marginBottom: "2.5rem" }}>
             Coping Strategies
           </h2>
           <div className="grid md:grid-cols-2 gap-3">
             {COPING.map((c, i) => (
               <div key={c.title} style={{ borderRadius: "1rem", overflow: "hidden", border: "1px solid rgba(255,255,255,0.1)" }}>
-                <button onClick={() => setOpenCoping(openCoping === i ? null : i)} className="w-full flex items-center gap-4 p-5 text-left" style={{ background: openCoping === i ? "var(--color-crimson)" : "rgba(255,255,255,0.05)", transition: "background 0.2s" }}>
-                  <span style={{ fontSize: "1.5rem", flexShrink: 0 }}>{c.icon}</span>
-                  <span style={{ flex: 1, fontFamily: "var(--font-display)", fontWeight: 800, fontSize: "1.1rem", color: "white", textTransform: "uppercase" }}>{c.title}</span>
+                <button onClick={() => setOpenCoping(openCoping === i ? null : i)} className="w-full flex items-center gap-4 p-5 text-left" style={{ background: openCoping === i ? "var(--color-crimson)" : "rgba(255,255,255,0.03)", transition: "background 0.2s" }}>
+                  {/* <span style={{ fontSize: "1.5rem", flexShrink: 0 }}></span> */}
+                  <span style={{ flex: 1, fontFamily: "var(--font-display)", fontWeight: 400, fontSize: "1.1rem", color: "white", textTransform: "uppercase" }}>{c.title}</span>
                   <span style={{ color: "var(--color-amber)", fontWeight: 700, fontSize: "1.25rem" }}>{openCoping === i ? "−" : "+"}</span>
                 </button>
                 {openCoping === i && (
-                  <div style={{ background: "rgba(124,26,53,0.25)", padding: "1rem 1.5rem 1.25rem" }}>
-                    <p style={{ fontSize: "0.9rem", lineHeight: 1.75, color: "rgba(255,255,255,0.75)" }}>{c.body}</p>
+                  <div style={{ background: "rgba(124,26,53,0.2)", padding: "1.25rem 1.5rem" }}>
+                    <p style={{ fontSize: "0.9rem", lineHeight: 1.75, color: "rgba(255,255,255,0.8)" }}>{c.body}</p>
                   </div>
                 )}
               </div>
@@ -351,7 +355,7 @@ export default function App() {
         </div>
       </section>
 
-      {/* TREATMENT */}
+      {/* MEDICAL TREATMENTS */}
       <section id="treatment" style={{ background: "var(--color-offwhite)", padding: "5rem 0" }}>
         <div className="max-w-5xl mx-auto px-6 md:px-14">
           <p style={{ color: "var(--color-crimson)", fontSize: "0.75rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: "0.75rem" }}>Medical options</p>
@@ -359,9 +363,9 @@ export default function App() {
             Treatment Pathways
           </h2>
           <p style={{ fontSize: "1rem", lineHeight: 1.8, maxWidth: "560px", marginBottom: "2rem", color: "var(--color-charcoal)" }}>
-            No single treatment fits everyone. The right approach depends on your symptoms, fertility goals, and response to treatment. <strong style={{ color: "var(--color-crimson)" }}>Ask specifically about excision surgery</strong> — it has far better long-term outcomes than ablation.
+            No single treatment fits everyone. The approach relies on your unique metrics, lifecycle timelines, and systemic updates. <strong style={{ color: "var(--color-crimson)" }}>Ask about surgical excision pathways</strong> — it returns far better long-term clinical control.
           </p>
-          {/* Tabs */}
+          
           <div className="flex gap-2 flex-wrap mb-6">
             {TREATMENTS.map((t, i) => (
               <button key={t.tab} onClick={() => setActiveTreatment(i)} style={{
@@ -385,24 +389,23 @@ export default function App() {
               ))}
             </ul>
           </div>
-          {/* Excision callout */}
           <div style={{ background: "var(--color-amber)", borderRadius: "1rem", padding: "1.5rem 2rem", marginTop: "1.5rem", display: "flex", gap: "1rem", alignItems: "center" }}>
-            <span style={{ fontSize: "2rem", flexShrink: 0 }}></span>
+            {/* <span>⚡</span> */}
             <p style={{ fontSize: "0.9rem", lineHeight: 1.7, color: "var(--color-crimson-dark)", fontWeight: 500 }}>
-              <strong>Excision vs. Ablation:</strong> Excision removes lesions at the root and has significantly lower recurrence rates. Always ask your surgeon which technique they use.
+              <strong>Excision vs. Ablation:</strong> Excision completely cuts out deep lesions from the root rather than burning the surface layer. Always query your care provider regarding structural choices.
             </p>
           </div>
         </div>
       </section>
 
-      {/* TRACK YOUR SYMPTOMS — callout */}
+      {/* CLOSING METRICS BANNER */}
       <section style={{ background: "var(--color-crimson)", padding: "4rem 0" }}>
         <div className="max-w-3xl mx-auto px-6 md:px-14 text-center">
           <h2 style={{ fontFamily: "var(--font-display)", fontWeight: 900, fontSize: "clamp(2.5rem,4vw,4rem)", color: "white", textTransform: "uppercase", lineHeight: 1, marginBottom: "1rem" }}>
             Track Before<br /><span style={{ color: "var(--color-amber)" }}>You Attend</span>
           </h2>
           <p style={{ fontSize: "1rem", lineHeight: 1.8, color: "rgba(255,255,255,0.8)", maxWidth: "480px", margin: "0 auto 2rem" }}>
-            Log these for 2+ cycles before your appointment. Patterns give your clinician far more than memory alone — and make it harder for symptoms to be dismissed.
+            Log symptoms consistently across 2+ monthly cycles. Structured baseline timelines help clinical networks implement your protocols without delay.
           </p>
           <div className="flex flex-wrap gap-3 justify-center">
             {["Pain score & location", "Bleeding volume", "Bowel & bladder notes", "Medication taken", "Sleep quality", "Energy level"].map((t) => (
@@ -412,7 +415,7 @@ export default function App() {
         </div>
       </section>
 
-      {/* SUPPORT */}
+      {/* SUPPORT AND NETWORKS */}
       <section id="support" style={{ background: "var(--color-charcoal)", padding: "5rem 0" }}>
         <div className="max-w-5xl mx-auto px-6 md:px-14 grid md:grid-cols-2 gap-12">
           <div>
@@ -421,7 +424,7 @@ export default function App() {
               Find Your Support
             </h2>
             <p style={{ fontSize: "1rem", lineHeight: 1.8, color: "rgba(255,255,255,0.7)", marginBottom: "2rem" }}>
-              Endometriosis is isolating — especially when others minimise the pain. Finding your community provides emotional grounding and practical strategies from people who truly get it.
+              Endometriosis is complex — community resource mapping provides foundational support alongside verified peer tracking feedback.
             </p>
             <div style={{ background: "var(--color-crimson)", borderRadius: "1rem", padding: "1.5rem 2rem" }}>
               <h3 style={{ fontFamily: "var(--font-display)", fontWeight: 800, fontSize: "1.25rem", color: "white", textTransform: "uppercase", marginBottom: "0.75rem" }}>Finding a specialist</h3>
@@ -436,10 +439,10 @@ export default function App() {
               {RESOURCES.map((r) => (
                 <li key={r.name}>
                   <a href={r.url} target="_blank" rel="noopener noreferrer" style={{
-                    display: "flex", alignItems: "center", gap: "0.875rem", padding: "1rem 1.25rem", borderRadius: "0.875rem", textDecoration: "none", background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)", transition: "all 0.2s"
+                    display: "flex", alignItems: "center", gap: "0.875rem", padding: "1rem 1.25rem", borderRadius: "0.875rem", textDecoration: "none", background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", transition: "all 0.2s"
                   }}
-                    onMouseEnter={e => { e.currentTarget.style.background = "rgba(245,168,32,0.15)"; e.currentTarget.style.borderColor = "rgba(245,168,32,0.3)"; }}
-                    onMouseLeave={e => { e.currentTarget.style.background = "rgba(255,255,255,0.06)"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.1)"; }}
+                    onMouseEnter={e => { e.currentTarget.style.background = "rgba(245,168,32,0.12)"; e.currentTarget.style.borderColor = "rgba(245,168,32,0.2)"; }}
+                    onMouseLeave={e => { e.currentTarget.style.background = "rgba(255,255,255,0.04)"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)"; }}
                   >
                     <span style={{ color: "var(--color-amber)", fontWeight: 700 }}>→</span>
                     <span style={{ fontSize: "0.875rem", color: "white", fontWeight: 500 }}>{r.name}</span>

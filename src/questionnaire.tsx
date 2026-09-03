@@ -13,23 +13,13 @@ export default function Questionnaire({ onBackToHome }: QuestionnaireProps) {
     {
       title: "Section 1: Menstrual History & Pelvic Pain Characteristics",
       description: "This section establishes the timeline, cyclicity, and physiological presentation of pelvic pain.",
+      sectionNoteId: "q1_additional_notes",
       questions: [
         {
           id: "q1_severity",
           type: "radio",
           text: "1a. How severe is your menstrual pain on a scale of 1–10?",
-          options: [
-            "1",
-            "2",
-            "3",
-            "4",
-            "5",
-            "6",
-            "7",
-            "8",
-            "9",
-            "10"
-          ]
+          options: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"]
         },
         {
           id: "q1_med",
@@ -44,7 +34,7 @@ export default function Questionnaire({ onBackToHome }: QuestionnaireProps) {
         {
           id: "q2_cyclicity",
           type: "radio",
-          text: "2. Does your pelvic or lower back pain occur exclusively during your period, or do you also experience pain in between cycles?",
+          text: "2. Does your lower belly (pelvic) or lower back pain occur exclusively during your period, or do you also experience pain in between cycles?",
           options: [
             "Only during my period (cyclical pain)",
             "Starts a few days before my period and goes away during bleeding",
@@ -98,6 +88,7 @@ export default function Questionnaire({ onBackToHome }: QuestionnaireProps) {
     {
       title: "Section 2: Systemic & Extrapelvic Symptoms",
       description: "This section evaluates how deep tissue implants may be interacting with the digestive, urinary, and reproductive systems.",
+      sectionNoteId: "q2_additional_notes",
       questions: [
         {
           id: "q6_intercourse",
@@ -161,6 +152,7 @@ export default function Questionnaire({ onBackToHome }: QuestionnaireProps) {
     {
       title: "Section 3: Medical, Family, & Treatment History",
       description: "This section gathers context on potential genetic predispositions and what medical interventions have already been attempted.",
+      sectionNoteId: "q3_additional_notes",
       questions: [
         {
           id: "q11_family",
@@ -207,17 +199,6 @@ export default function Questionnaire({ onBackToHome }: QuestionnaireProps) {
             "Yes, another pelvic surgery (appendectomy, C-section, etc.)",
             "No, I have never had pelvic surgery"
           ]
-        }
-      ]
-    },
-    {
-      title: "Section 4: Additional Information & Patient Notes",
-      description: "This section allows you to provide any extra details or unlisted symptoms for your assessment.",
-      questions: [
-        {
-          id: "q15_additional_symptoms",
-          type: "textarea",
-          text: "15. Please describe any additional symptoms, flare-up triggers, or specific details about your pain that were not captured in the previous sections:"
         }
       ]
     }
@@ -277,6 +258,28 @@ export default function Questionnaire({ onBackToHome }: QuestionnaireProps) {
 
   return (
     <div style={{ padding: "30px", fontFamily: "sans-serif", maxWidth: "700px", margin: "0 auto" }}>
+      
+      {/* Disclaimers appear right at the top of Section 1 */}
+      {currentStep === 0 && (
+        <div style={{ marginBottom: "25px", display: "flex", flexDirection: "column", gap: "12px" }}>
+          {/* Under 18 Guardian Warning */}
+          <div style={{ padding: "16px", backgroundColor: "#f0f4f8", borderLeft: "4px solid #2b6cb0", borderRadius: "6px", color: "#2d3748", fontSize: "0.85rem", lineHeight: "1.5" }}>
+            <strong style={{ color: "#2b6cb0", display: "block", marginBottom: "4px", fontSize: "0.95rem" }}>
+              Age Notice
+            </strong>
+            <strong>If you are under 18 years old, a parent or legal guardian should help you answer this questionnaire.</strong>
+          </div>
+
+          {/* Medical Disclaimer */}
+          <div style={{ padding: "16px", backgroundColor: "#fff5f5", borderLeft: "4px solid #bd4f6c", borderRadius: "6px", color: "#4a5568", fontSize: "0.85rem", lineHeight: "1.5" }}>
+            <strong style={{ color: "#bd4f6c", display: "block", marginBottom: "4px", fontSize: "0.95rem" }}>
+              Medical Disclaimer
+            </strong>
+            <strong>This assessment tool is for informational purposes only and does not provide a formal medical diagnosis. The information gathered here should not replace professional medical advice, diagnosis, or treatment. If you are experiencing severe symptoms or a medical emergency, please seek immediate medical assistance from a qualified healthcare professional.</strong>
+          </div>
+        </div>
+      )}
+
       <h2 style={{ color: "#bd4f6c", marginBottom: "5px" }}>{currentSection.title}</h2>
       <p style={{ color: "#666", fontSize: "14px", marginTop: "0", marginBottom: "25px" }}>
         {currentSection.description}
@@ -287,27 +290,9 @@ export default function Questionnaire({ onBackToHome }: QuestionnaireProps) {
           <div key={q.id} style={{ borderBottom: "1px solid #eee", paddingBottom: "20px" }}>
             <p style={{ fontWeight: "bold", marginBottom: "10px" }}>{q.text}</p>
             
-            {/* SCALE INPUT MATRIX */}
-            {/* {q.type === "scale" && (
-              <div>
-                <input
-                  type="range"
-                  min="1"
-                  max="10"
-                  value={answers[q.id] || 5}
-                  onChange={(e) => handleRadioScaleChange(q.id, parseInt(e.target.value))}
-                  style={{ width: "100%", accentColor: "#bd4f6c" }}
-                />
-                <div style={{ display: "flex", justifyContent: "space-between", fontSize: "12px", color: "#555" }}>
-                  <span>{q.minLabel}</span>
-                  <span>Selected: {answers[q.id] || 5}</span>
-                  <span>{q.maxLabel}</span>
-                </div>
-              </div>
-            )} */}
             {/* RADIO INPUT MATRIX question 1 */}
             {q.type === "radio"  && q.id == "q1_severity" && q.options && (
-              <div style={{ display: "flex", flexDirection: "row", gap: "8px" }}>
+              <div style={{ display: "flex", flexDirection: "row", gap: "8px", flexWrap: "wrap" }}>
                 {q.options.map((opt) => (
                   <label key={opt} style={{ display: "flex", alignItems: "center", gap: "8px", cursor: "pointer" }}>
                     <input
@@ -356,37 +341,32 @@ export default function Questionnaire({ onBackToHome }: QuestionnaireProps) {
                 ))}
               </div>
             )}
-
-            {/* TEXTAREA INPUT MATRIX */}
-            {q.type === "textarea" && (
-              <textarea
-                rows={5}
-                value={answers[q.id] || ""}
-                onChange={(e) => handleRadioScaleChange(q.id, e.target.value)}
-                placeholder="Please describe any additional details or symptoms here..."
-                style={{
-                  width: "100%",
-                  padding: "10px",
-                  borderRadius: "5px",
-                  border: "1px solid #ccc",
-                  resize: "vertical",
-                  fontFamily: "inherit",
-                  boxSizing: "border-box"
-                }}
-              />
-            )}
           </div>
         ))}
+
+        {/* Dynamic Section-Specific Additional Notes Box */}
+        <div style={{ paddingBottom: "20px" }}>
+          <p style={{ fontWeight: "bold", marginBottom: "10px" }}>
+            Please provide any additional symptoms, triggers, or specific details regarding this section:
+          </p>
+          <textarea
+            rows={4}
+            value={answers[currentSection.sectionNoteId] || ""}
+            onChange={(e) => handleRadioScaleChange(currentSection.sectionNoteId, e.target.value)}
+            placeholder="Type your additional section details here..."
+            style={{
+              width: "100%",
+              padding: "10px",
+              borderRadius: "5px",
+              border: "1px solid #ccc",
+              resize: "vertical",
+              fontFamily: "inherit",
+              boxSizing: "border-box"
+            }}
+          />
+        </div>
       </div>
-              {/* ⚠️ Only displays if the user is on the 4th section (index 3) */}
-        {currentStep === 3 && (
-          <div style={{ marginTop: "24px", marginBottom: "24px", padding: "16px", backgroundColor: "#fff5f5", borderLeft: "4px solid #bd4f6c", borderRadius: "6px", color: "#4a5568", fontSize: "0.85rem", lineHeight: "1.5" }}>
-            <strong style={{ color: "#bd4f6c", display: "block", marginBottom: "6px", fontSize: "0.95rem" }}>
-              Medical Disclaimer
-            </strong>
-            <strong>This assessment tool is for informational purposes only and does not provide a formal medical diagnosis. The information gathered here should not replace professional medical advice, diagnosis, or treatment. If you are experiencing severe symptoms or a medical emergency, please seek immediate medical assistance from a qualified healthcare professional.</strong>
-          </div>
-        )}  
+
       {/* NAVIGATION CONTROLS */}
       <div style={{ display: "flex", justifyContent: "space-between", marginTop: "30px" }}>
         <button
