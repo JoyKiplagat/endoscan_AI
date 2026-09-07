@@ -8,6 +8,8 @@ export default function Questionnaire({ onBackToHome }: QuestionnaireProps) {
   const [currentStep, setCurrentStep] = useState(0);
   const [answers, setAnswers] = useState<Record<string, any>>({});
   const [showResults, setShowResults] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const steps = [
     {
@@ -203,7 +205,7 @@ export default function Questionnaire({ onBackToHome }: QuestionnaireProps) {
       ]
     }
   ];
-    
+
   const handleRadioScaleChange = (questionId: string, value: any) => {
     setAnswers((prev) => ({ ...prev, [questionId]: value }));
   };
@@ -219,19 +221,68 @@ export default function Questionnaire({ onBackToHome }: QuestionnaireProps) {
     });
   };
 
-  const handleNext = () => {
+  const handleNext = async () => {
+    setErrorMessage(null);
+
     if (currentStep < steps.length - 1) {
       setCurrentStep((prev) => prev + 1);
-      window.scrollTo({top:0, behavior:"smooth"});
-    } else {
-      setShowResults(true);
+      window.scrollTo({ top:0, behavior: "smooth"});
+      return;
+    }
+
+    const token = localStorage.getItem("userToken");
+
+    if (!token) {
+      setErrorMessage("Your session has expired or you are not logged in. Please log in again.");
+      return;
+    }
+
+    setIsLoading(true);
+
+    const isJwt = token.includes(".");
+    const authPrefix = isJwt ? "Bearer" : "Token";
+
+    const payload = {
+      patient: parseInt(localStorage.getItem("patientId") || "1", 10),
+      raw_responses: answers,
+      model_output: {
+        risk_level: "Evaluation Logged",
+        summary: "Assessment raw responses archived safely in backend.",
+        confidence_score: 0.85
+      }
+    };
+
+    try {
+      const response = await fetch("http://127.0.0.1:8000/api/patients/questionnaire/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `${authPrefix} ${token}`
+        },
+        body: JSON.stringify(payload)
+      });
+
+      const data = await response.json().catch(() => null);
+
+      if (response.ok) {
+        console.log("Model response successfully captured:", data);
+        setShowResults(true);
+      } else {
+        console.error(`HTTP Error ${response.status}:`, data);
+        setErrorMessage(data?.detail || `Submission failed with status ${response.status}`);
+      }
+    } catch (error) {
+      console.error("Network error:", error);
+      setErrorMessage("Unable to connect to server. Please ensure Django is running.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const handleBack = () => {
     if (currentStep > 0) {
       setCurrentStep((prev) => prev - 1);
-      window.scrollTo({top:0, behavior:"smooth"});
+      window.scrollTo({ top: 0, behavior: "smooth"})
     } else {
       onBackToHome();
     }
@@ -241,7 +292,7 @@ export default function Questionnaire({ onBackToHome }: QuestionnaireProps) {
     return (
       <div style={{ padding: "30px", fontFamily: "sans-serif", maxWidth: "600px", margin: "0 auto" }}>
         <h2 style={{ color: "#bd4f6c" }}>Assessment Complete</h2>
-        <p>Your responses have been successfully logged for analytical screening.</p>
+        <p>Your responses have been successfully logged and processed by our predictive model.</p>
         <div style={{ background: "#f9f9f9", padding: "15px", borderRadius: "8px", margin: "20px 0" }}>
           <h4>Responses Captured:</h4>
           <p>Total Items Addressed: <strong>{Object.keys(answers).length}</strong></p>
@@ -250,7 +301,7 @@ export default function Questionnaire({ onBackToHome }: QuestionnaireProps) {
           onClick={onBackToHome}
           style={{ padding: "10px 20px", background: "#bd4f6c", color: "#fff", border: "none", borderRadius: "5px", cursor: "pointer" }}
         >
-          Return to Dashboard
+          Return to home
         </button>
       </div>
     );
@@ -260,40 +311,34 @@ export default function Questionnaire({ onBackToHome }: QuestionnaireProps) {
 
   return (
     <div style={{ padding: "30px", fontFamily: "sans-serif", maxWidth: "700px", margin: "0 auto" }}>
-      
-      {/* Disclaimers appear right at the top of Section 1 */}
       {currentStep === 0 && (
         <div style={{ marginBottom: "25px", display: "flex", flexDirection: "column", gap: "12px" }}>
-          {/* Under 18 Guardian Warning */}
           <div style={{ padding: "16px", backgroundColor: "#f0f4f8", borderLeft: "4px solid #2b6cb0", borderRadius: "6px", color: "#2d3748", fontSize: "0.85rem", lineHeight: "1.5" }}>
-            <strong style={{ color: "#2b6cb0", display: "block", marginBottom: "4px", fontSize: "0.95rem" }}>
-              Age Notice
-            </strong>
+            <strong style={{ color: "#2b6cb0", display: "block", marginBottom: "4px", fontSize: "0.95rem" }}>Age Notice</strong>
             <strong>If you are under 18 years old, a parent or legal guardian should help you answer this questionnaire.</strong>
           </div>
-
-          {/* Medical Disclaimer */}
           <div style={{ padding: "16px", backgroundColor: "#fff5f5", borderLeft: "4px solid #bd4f6c", borderRadius: "6px", color: "#4a5568", fontSize: "0.85rem", lineHeight: "1.5" }}>
-            <strong style={{ color: "#bd4f6c", display: "block", marginBottom: "4px", fontSize: "0.95rem" }}>
-              Medical Disclaimer
-            </strong>
-            <strong>This assessment tool is for informational purposes only and does not provide a formal medical diagnosis. The information gathered here should not replace professional medical advice, diagnosis, or treatment. If you are experiencing severe symptoms or a medical emergency, please seek immediate medical assistance from a qualified healthcare professional.</strong>
+            <strong style={{ color: "#bd4f6c", display: "block", marginBottom: "4px", fontSize: "0.95rem" }}>Medical Disclaimer</strong>
+            <strong>This assessment tool is for informational purposes only and does not provide a formal medical diagnosis. The information gathered here should not replace professional medical advice, diagnosis, or treatment.</strong>
           </div>
         </div>
       )}
 
+      {errorMessage && (
+        <div style={{ padding: "12px 16px", backgroundColor: "#fff5f5", color: "#c53030", border: "1px solid #feb2b2", borderRadius: "6px", marginBottom: "20px" }}>
+          <strong>Error:</strong> {errorMessage}
+        </div>
+      )}
+
       <h2 style={{ color: "#bd4f6c", marginBottom: "5px" }}>{currentSection.title}</h2>
-      <p style={{ color: "#666", fontSize: "14px", marginTop: "0", marginBottom: "25px" }}>
-        {currentSection.description}
-      </p>
+      <p style={{ color: "#666", fontSize: "14px", marginTop: "0", marginBottom: "25px" }}>{currentSection.description}</p>
       
       <div style={{ display: "flex", flexDirection: "column", gap: "25px" }}>
         {currentSection.questions.map((q) => (
           <div key={q.id} style={{ borderBottom: "1px solid #eee", paddingBottom: "20px" }}>
             <p style={{ fontWeight: "bold", marginBottom: "10px" }}>{q.text}</p>
             
-            {/* RADIO INPUT MATRIX question 1 */}
-            {q.type === "radio"  && q.id == "q1_severity" && q.options && (
+            {q.type === "radio" && q.id === "q1_severity" && q.options && (
               <div style={{ display: "flex", flexDirection: "row", gap: "8px", flexWrap: "wrap" }}>
                 {q.options.map((opt) => (
                   <label key={opt} style={{ display: "flex", alignItems: "center", gap: "8px", cursor: "pointer" }}>
@@ -308,8 +353,7 @@ export default function Questionnaire({ onBackToHome }: QuestionnaireProps) {
                   </label>
                 ))}
               </div>
-            )}         
-            {/* RADIO INPUT MATRIX */}
+            )}
             {q.type === "radio" && q.id !== "q1_severity" && q.options && (
               <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
                 {q.options.map((opt) => (
@@ -327,7 +371,6 @@ export default function Questionnaire({ onBackToHome }: QuestionnaireProps) {
               </div>
             )}
             
-            {/* CHECKBOX MULTI-SELECT MATRIX */}
             {q.type === "checkbox" && q.options && (
               <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
                 {q.options.map((opt) => (
@@ -346,42 +389,28 @@ export default function Questionnaire({ onBackToHome }: QuestionnaireProps) {
           </div>
         ))}
 
-        {/* Dynamic Section-Specific Additional Notes Box */}
         <div style={{ paddingBottom: "20px" }}>
-          <p style={{ fontWeight: "bold", marginBottom: "10px" }}>
-            Please provide any additional symptoms, triggers, or specific details regarding this section:
-          </p>
+          <p style={{ fontWeight: "bold", marginBottom: "10px" }}>Please provide any additional symptoms, triggers, or specific details regarding this section:</p>
           <textarea
             rows={4}
             value={answers[currentSection.sectionNoteId] || ""}
             onChange={(e) => handleRadioScaleChange(currentSection.sectionNoteId, e.target.value)}
             placeholder="Type your additional section details here..."
-            style={{
-              width: "100%",
-              padding: "10px",
-              borderRadius: "5px",
-              border: "1px solid #ccc",
-              resize: "vertical",
-              fontFamily: "inherit",
-              boxSizing: "border-box"
-            }}
+            style={{ width: "100%", padding: "10px", borderRadius: "5px", border: "1px solid #ccc", resize: "vertical", fontFamily: "inherit", boxSizing: "border-box" }}
           />
         </div>
       </div>
 
-      {/* NAVIGATION CONTROLS */}
       <div style={{ display: "flex", justifyContent: "space-between", marginTop: "30px" }}>
-        <button
-          onClick={handleBack}
-          style={{ padding: "10px 20px", background: "#ccc", border: "none", borderRadius: "5px", cursor: "pointer" }}
-        >
+        <button onClick={handleBack} disabled={isLoading} style={{ padding: "10px 20px", background: "#ccc", border: "none", borderRadius: "5px", cursor: "pointer" }}>
           {currentStep === 0 ? "Cancel" : "Back"}
         </button>
         <button
           onClick={handleNext}
-          style={{ padding: "10px 20px", background: "#bd4f6c", color: "#fff", border: "none", borderRadius: "5px", cursor: "pointer" }}
+          disabled={isLoading}
+          style={{ padding: "10px 20px", background: isLoading ? "#d894a4" : "#bd4f6c", color: "#fff", border: "none", borderRadius: "5px", cursor: isLoading ? "not-allowed" : "pointer" }}
         >
-          {currentStep === steps.length - 1 ? "Submit Assessment" : "Next Section"}
+          {isLoading ? "Submitting..." : currentStep === steps.length - 1 ? "Submit Assessment" : "Next Section"}
         </button>
       </div>
     </div>

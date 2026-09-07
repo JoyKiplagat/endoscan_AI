@@ -56,37 +56,86 @@ export default function App() {
   const [activeStage, setActiveStage] = useState(0);
   const [activeTreatment, setActiveTreatment] = useState(0);
   const [openCoping, setOpenCoping] = useState<number | null>(null);
+  const [isMenuOpen, setIsMenuOpen] = useState(false); // New state for mobile toggle
 
+  const links = [
+    { label: 'Home', href: '#Home' }, 
+    { label: 'About', href: '#about' },                
+    // { label: 'Stages', href: '#stages' },
+    { label: 'Questionnaire', href: "/questionnaire" }, 
+    { label: 'Screening', href: "/upload-docs" }, 
+    { label: 'Support', href: '#support' },
+    { label: 'Sign In', href: '/auth' }
+  ];
+  
   return (
     <div style={{ background: "var(--color-offwhite)", color: "var(--color-charcoal)", fontFamily: "var(--font-body)" }}>
       
       {/* NAVIGATION */}
-      <nav style={{ background: 'var(--color-crimson)' }} className="sticky top-0 z-50 flex items-center justify-between px-6 md:px-14 py-4 border-b border-[rgba(255,255,255,0.1)] shadow-md">
-        <span style={{ fontFamily: 'var(--font-display)', color: 'var(--color-blush)', fontSize: '1.5rem', fontWeight: 800, letterSpacing: '0.05em' }}> 
-          HER MATTERS 
-        </span> 
-        <div className="hidden md:flex gap-8"> 
-          {[
-            { label: 'Home', href: '#Home' }, 
-            { label: 'About', href: '#about' },                
-            { label: 'Stages', href: '#stages' }, 
-            { label: 'Treatment', href: '#treatment' }, 
-            { label: 'Support', href: '#support' },
-            { label: 'Sign In', href: '/auth' }
-          ].map((l) => ( 
-            <a 
-              key={l.label} 
-              href={l.href} 
-              style={{ color: 'rgba(234,160,176,0.8)', fontSize: '0.8rem', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', textDecoration: 'none', transition: 'color 0.2s ease' }} 
-              onMouseEnter={e => (e.currentTarget.style.color = 'var(--color-blush)')} 
-              onMouseLeave={e => (e.currentTarget.style.color = 'rgba(234,160,176,0.8)')} 
-            >
-              {l.label}
-            </a> 
-          ))} 
-        </div> 
-      </nav>
+      <nav 
+        style={{ background: 'var(--color-crimson)' }} 
+        className="sticky top-0 z-50 px-6 md:px-14 py-4 border-b border-[rgba(255,255,255,0.1)] shadow-md transition-all duration-300"
+      >
+        {/* Main row layout */}
+        <div className="flex items-center justify-between">
+          <span style={{ fontFamily: 'var(--font-display)', color: 'var(--color-blush)', fontSize: '1.5rem', fontWeight: 800, letterSpacing: '0.05em' }}> 
+            HER MATTERS 
+          </span> 
+          
+          {/* DESKTOP LINKS (Hidden on screens below 768px wide) */}
+          <div className="hidden md:flex gap-8 justify-end"> 
+            {links.map((l) => ( 
+              <a 
+                key={l.label} 
+                href={l.href} 
+                style={{ color: 'rgba(234,160,176,0.8)', fontSize: '0.8rem', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', textDecoration: 'none', transition: 'color 0.2s ease' }} 
+                onMouseEnter={e => (e.currentTarget.style.color = 'var(--color-blush)')} 
+                onMouseLeave={e => (e.currentTarget.style.color = 'rgba(234,160,176,0.8)')} 
+              >
+                {l.label}
+              </a> 
+            ))} 
+          </div> 
 
+          {/* TOGGLE BUTTON (Visible only on mobile/tablet) */}
+          <button 
+            onClick={() => setIsMenuOpen(!isMenuOpen)} 
+            className="md:hidden flex items-center justify-center p-2 focus:outline-none transition-colors duration-200"
+            style={{ color: 'var(--color-blush)' }}
+            aria-label="Toggle Menu"
+          >
+            {isMenuOpen ? (
+              /* Close Icon (X) */
+              <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            ) : (
+              /* Hamburger Icon (☰) */
+              <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            )}
+          </button>
+        </div>
+
+        {/* MOBILE & TABLET DROPDOWN (Toggles open/closed smoothly) */}
+        <div className={`md:hidden overflow-hidden transition-all duration-300 ease-in-out ${isMenuOpen ? 'max-h-[400px] opacity-100 mt-4' : 'max-h-0 opacity-0'}`}>
+          <div className="flex flex-col gap-4 pb-2 border-t border-[rgba(255,255,255,0.1)] pt-4">
+            {links.map((l) => ( 
+              <a 
+                key={l.label} 
+                href={l.href} 
+                onClick={() => setIsMenuOpen(false)} // Auto-closes panel when nav item is pressed
+                style={{ color: 'rgba(234,160,176,0.8)', fontSize: '0.9rem', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', textDecoration: 'none' }} 
+                className="hover:text-[var(--color-blush)] transition-colors duration-200"
+              >
+                {l.label}
+              </a> 
+            ))} 
+          </div>
+        </div>
+      </nav>
+      
       {/* HERO SECTION (FORMER ABOUT SECTION) */}
       <section id="Home" className="relative overflow-hidden min-h-[90vh] flex flex-col lg:flex-row items-stretch" style={{ background: "var(--color-crimson)" }}>
         {/* Background visual blur anchor */}
@@ -189,7 +238,7 @@ export default function App() {
               </div>
             </div>
 
-            <div className="flex gap-4 items-start">
+            <div  className="flex gap-4 items-start">
               {/* <span className="p-2 rounded-xl flex-shrink-0" style={{ background: "rgba(245,168,32,0.1)" }}>
                 <svg width="20" height="20" fill="var(--color-amber)" viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
               </span> */}
@@ -201,12 +250,12 @@ export default function App() {
           </div>
 
           {/* Secure Document Intake Panel */}
-          <div style={{ background: "rgba(255,255,255,0.02)", border: "1px dashed rgba(255,255,255,0.2)", borderRadius: "1.5rem", padding: "1.5rem 1.75rem" }}>
-            <div className="flex items-center justify-between mb-2">
+          <div  style={{ background: "rgba(255,255,255,0.02)", border: "1px dashed rgba(255,255,255,0.2)", borderRadius: "1.5rem", padding: "1.5rem 1.75rem" }}>
+            <div  className="flex items-center justify-between mb-2">
               <h4 style={{ color: "white", fontSize: "1rem", fontWeight: 400 }}>Already have imaging reports?</h4>
               <span style={{ color: "var(--color-amber)", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em", background: "rgba(245,168,32,0.15)", padding: "0.25rem 0.5rem", borderRadius: "0.25rem" }}>Optional</span>
             </div>
-            <p style={{ color: "rgba(255,255,255,0.65)", fontSize: "0.875rem", lineHeight: 1.5, marginBottom: "1.25rem" }}>
+            <p  style={{ color: "rgba(255,255,255,0.65)", fontSize: "0.875rem", lineHeight: 1.5, marginBottom: "1.25rem" }}>
               Upload your ultrasound scans or pelvic MRI records so our system can read them and explain your results in simple language.
             </p>
             <a 

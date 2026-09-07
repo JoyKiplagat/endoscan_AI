@@ -26,6 +26,7 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import Home from "./Home";
 import Questionnaire from "./questionnaire";
+import Questionnaire1 from "./questionnaire1";
 import UploadDocs from "./UploadDocs";
 import Auth from "./Auth"; 
 import ChatBox from "./ChatBox"; 
@@ -33,13 +34,15 @@ import PatientDashboard from "./dashboard";
 
 // 1. A quick Protected Route component
 // Replace this mock condition with your actual authentication logic later (e.g., checking localStorage or global context)
-const ProtectedRoute = ({ children }) => {
-  const isAuthenticated = localStorage.getItem("userToken"); // Checks if user logged in/signed up
+const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
+  const token = localStorage.getItem("userToken");
   
+  const isAuthenticated = token && token !== "null" && token !== "undefined";
+
   if (!isAuthenticated) {
-    return <Navigate to="/auth" replace />; // Redirects unauthorized users to Auth page
+    return <Navigate to="/auth" replace />;
   }
-  
+
   return children;
 };
 
@@ -61,9 +64,10 @@ export default function App() {
             } 
           />
 
-          <Route path="/questionnaire" element={<Questionnaire onBackToHome={() => window.location.href = "/"} />} />
-          <Route path="/upload-docs" element={<UploadDocs onBackToHome={() => window.location.href = "/"} />} />
-          <Route path="/auth" element={<Auth onBackToHome={() => window.location.href = "/"} />} />
+          <Route path="/questionnaire" element={<Questionnaire onBackToHome={() => window.location.href = "/#Home"} />} />
+          <Route path="/questionnaire1" element={<Questionnaire1 onBackToHome={() => window.location.href = "/dashboard"} />} />
+          <Route path="/upload-docs" element={<UploadDocs onBackToHome={() => window.location.href = "/#Home"} />} />
+          <Route path="/auth" element={<Auth onBackToHome={() => window.location.href = "/#Home"} />} />
         </Routes>
 
         <ChatBox />
