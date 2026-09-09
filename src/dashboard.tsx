@@ -16,6 +16,13 @@ interface QuestionnaireSubmission {
   submitted_at: string;
   raw_responses: Record<string, any>;
   model_output: {
+    explanation?: string;
+    esi_result?: {
+      tier?: string;
+      score?: number;
+      systems_affected?: string[];
+      [key: string]: any;
+    };
     risk_level?: string;
     summary?: string;
     confidence_score?: number;
@@ -83,7 +90,6 @@ export default function PatientDashboard() {
       if (!headers) return;
 
       try {
-        // 1. Fetch Patient Profile
         const profileRes = await fetch(`http://127.0.0.1:8000/api/patients/profile/${currentPatientId}/`, { headers });
         if (handleAuthError(profileRes)) return;
         if (profileRes.ok) {
@@ -96,7 +102,6 @@ export default function PatientDashboard() {
           });
         }
 
-        // 2. Fetch Symptom Logs
         const logsResponse = await fetch(`http://127.0.0.1:8000/api/patients/logs/?patient=${currentPatientId}`, { headers });
         if (handleAuthError(logsResponse)) return;
         if (logsResponse.ok) {
@@ -104,7 +109,6 @@ export default function PatientDashboard() {
           setSymptomLogs(logsData);
         }
 
-        // 3. Fetch Questionnaire Submissions (Raw Responses + Model Output)
         const questionnaireRes = await fetch(`http://127.0.0.1:8000/api/patients/questionnaire/?patient=${currentPatientId}`, { headers });
         if (handleAuthError(questionnaireRes)) return;
         if (questionnaireRes.ok) {
@@ -112,7 +116,6 @@ export default function PatientDashboard() {
           setQuestionnaireSubmissions(submissionsData);
         }
 
-        // 4. Fetch Diagnostic Scans (Scan File + Scan Note Model Output)
         const scansResponse = await fetch(`http://127.0.0.1:8000/api/patients/scans/?patient=${currentPatientId}`, { headers });
         if (handleAuthError(scansResponse)) return;
         if (scansResponse.ok) {
@@ -241,7 +244,6 @@ export default function PatientDashboard() {
       if (handleAuthError(response)) return;
 
       if (response.ok) {
-        // Response contains both saved scan_file path AND generated scan_note output
         const newScanRecord: ScanRecord = await response.json();
         setScans((prevScans) => [newScanRecord, ...prevScans]);
         setUploadStatus("Scan uploaded and analyzed successfully!");
@@ -267,8 +269,8 @@ export default function PatientDashboard() {
 
   return (
     <div className="min-h-screen bg-[var(--color-offwhite)] p-4 md:p-8">
-      <div className="max-w-6xl mx-auto">
-        <header className="mb-8 flex flex-col md:flex-row justify-between items-start md:items-center bg-white p-6 rounded-2xl shadow-sm border border-[rgba(0,0,0,0.03)] gap-4">
+      <div className="max-w-6xl mx-auto space-y-8">
+        <header className="flex flex-col md:flex-row justify-between items-start md:items-center bg-white p-6 rounded-2xl shadow-sm border border-[rgba(0,0,0,0.03)] gap-4">
           <div>
             <h1 className="font-[var(--font-display)] text-3xl font-extrabold uppercase text-[var(--color-charcoal)]">{profileData.name}</h1>
             <p className="text-gray-500 text-sm font-medium">Isolate medical tracking variables natively</p>
@@ -279,7 +281,7 @@ export default function PatientDashboard() {
           </div>
         </header>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
           <div className="lg:col-span-2 flex flex-col justify-center bg-gray-900 rounded-3xl p-8 md:p-12 shadow-md relative overflow-hidden z-10 min-h-full">
             <p style={{ color: "var(--color-amber)", fontSize: "0.8rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: "1.25rem" }}>Clinical Screening Element</p>
             <h1 style={{ fontFamily: "var(--font-display)", fontWeight: 400, fontSize: "clamp(1.8rem, 2.5vw, 3.5rem)", lineHeight: 1.1, color: "white", marginBottom: "1.5rem", textTransform: "uppercase" }}>Am I Safe, Or Should I <br /><span style={{ color: "var(--color-blush)" }}>See a Doctor?</span></h1>
@@ -323,77 +325,49 @@ export default function PatientDashboard() {
           </section>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2 space-y-8">
-            {/* Display Model Output from Questionnaire Submissions */}
-            <section className="bg-white p-6 rounded-2xl shadow-sm border border-[rgba(0,0,0,0.03)]">
-              <h2 className="text-lg font-bold text-[var(--color-charcoal)] mb-2 uppercase tracking-wide">Assessment History & ML Insights</h2>
-              <p className="text-xs text-gray-500 mb-4">Persisted model evaluation results captured from your symptom submissions.</p>
-              <div className="space-y-4 max-h-[250px] overflow-y-auto pr-2">
-                {questionnaireSubmissions.length === 0 ? (
-                  <p className="text-xs font-semibold text-gray-400 text-center py-4 bg-gray-50 rounded-xl border border-gray-100">No questionnaire assessments completed yet.</p>
-                ) : (
-                  questionnaireSubmissions.map((submission) => (
-                    <div key={submission.id} className="bg-red-50/60 border-l-4 border-[var(--color-crimson)] p-4 rounded-r-xl border border-red-100/50 flex flex-col gap-1">
+        {/* Main Sections Stacked Full Width */}
+        <div className="space-y-8">
+          {/* Assessment History */}
+          <section className="bg-white p-6 rounded-2xl shadow-sm border border-[rgba(0,0,0,0.03)] w-full">
+            <h2 className="text-lg font-bold text-[var(--color-charcoal)] mb-2 uppercase tracking-wide">Assessment History & ML Insights</h2>
+            <p className="text-xs text-gray-500 mb-4">Persisted model evaluation results captured from your symptom submissions.</p>
+            <div className="space-y-4 max-h-[350px] overflow-y-auto pr-2">
+              {questionnaireSubmissions.length === 0 ? (
+                <p className="text-xs font-semibold text-gray-400 text-center py-4 bg-gray-50 rounded-xl border border-gray-100">No questionnaire assessments completed yet.</p>
+              ) : (
+                questionnaireSubmissions.map((submission) => {
+                  const output = submission.model_output;
+                  const tier = output?.esi_result?.tier || output?.risk_level || "Evaluation Completed";
+                  const explanation = output?.explanation || output?.summary || "Assessment archived safely in backend.";
+
+                  return (
+                    <div key={submission.id} className="bg-red-50/60 border-l-4 border-[var(--color-crimson)] p-4 rounded-r-xl border border-red-100/50 flex flex-col gap-2">
                       <div className="flex justify-between items-center">
-                        <span className="text-[0.65rem] font-bold uppercase tracking-wider text-[var(--color-crimson)]">Submission #{submission.id} &bull; {submission.submitted_at ? submission.submitted_at.split('T')[0] : 'Recent'}</span>
-                        {submission.model_output?.confidence_score && <span className="text-[0.65rem] font-bold text-gray-500">Confidence: {(submission.model_output.confidence_score * 100).toFixed(0)}%</span>}
+                        <span className="text-[0.65rem] font-bold uppercase tracking-wider text-[var(--color-crimson)]">
+                          Submission #{submission.id} &bull; {submission.submitted_at ? submission.submitted_at.split('T')[0] : 'Recent'}
+                        </span>
+                        <span className="bg-red-100 text-[var(--color-crimson)] text-[0.65rem] px-2 py-0.5 rounded font-black uppercase">
+                          Tier: {tier}
+                        </span>
                       </div>
-                      <h4 className="text-sm font-bold text-gray-800">Risk Vector: {submission.model_output?.risk_level || "Evaluation Logged"}</h4>
-                      <p className="text-xs text-gray-600 font-medium">{submission.model_output?.summary || "Assessment raw responses archived safely in backend."}</p>
-                    </div>
-                  ))
-                )}
-              </div>
-            </section>
 
-            <section className="bg-white p-6 rounded-2xl shadow-sm border border-[rgba(0,0,0,0.03)]">
-              <h2 className="text-lg font-bold text-[var(--color-charcoal)] mb-2 uppercase tracking-wide">Log Daily Progress</h2>
-              <form onSubmit={handleAddLog} className="grid grid-cols-1 md:grid-cols-3 gap-4 bg-gray-50 p-4 rounded-xl border border-gray-100">
-                <div className="flex flex-col gap-1">
-                  <label className="text-[0.75rem] font-bold text-gray-500 uppercase">Pain Intensity ({newLog.painLevel}/10)</label>
-                  <input type="range" min="0" max="10" value={newLog.painLevel} onChange={(e) => setNewLog({...newLog, painLevel: parseInt(e.target.value)})} className="w-full accent-[var(--color-crimson)] h-2 bg-gray-200 rounded-lg cursor-pointer mt-2" />
-                </div>
-                <div className="flex flex-col gap-1">
-                  <label className="text-[0.75rem] font-bold text-gray-500 uppercase">Cycle Bleeding</label>
-                  <select value={newLog.bleeding} onChange={(e) => setNewLog({...newLog, bleeding: e.target.value})} className="rounded-lg border border-gray-200 bg-white p-2 text-sm focus:outline-none focus:border-gray-400"><option value="None">None</option><option value="Spotting">Spotting</option><option value="Light">Light</option><option value="Moderate">Moderate</option><option value="Heavy">Heavy</option></select>
-                </div>
-                <div className="flex flex-col gap-1">
-                  <label className="text-[0.75rem] font-bold text-gray-500 uppercase">Fatigue Severity</label>
-                  <select value={newLog.fatigue} onChange={(e) => setNewLog({...newLog, fatigue: e.target.value})} className="rounded-lg border border-gray-200 bg-white p-2 text-sm focus:outline-none focus:border-gray-400"><option value="Low">Low Fatigue</option><option value="Moderate">Moderate Fatigue</option><option value="Severe">Severe Fatigue</option></select>
-                </div>
-                <div className="md:col-span-3 flex flex-col gap-1">
-                  <label className="text-[0.75rem] font-bold text-gray-500 uppercase">Track Progress Notes & Symptoms</label>
-                  <input type="text" value={newLog.notes} onChange={(e) => setNewLog({...newLog, notes: e.target.value})} placeholder="E.g., tracking pain spikes post meals, specific flares..." className="rounded-lg border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:border-gray-400" />
-                </div>
-                <div className="md:col-span-3"><button type="submit" className="w-full bg-[var(--color-crimson)] text-white text-xs font-bold uppercase tracking-wider py-2.5 rounded-lg hover:opacity-95 transition-opacity">Commit Tracking Unit</button></div>
-              </form>
-            </section>
-
-            <section className="bg-white p-6 rounded-2xl shadow-sm border border-[rgba(0,0,0,0.03)]">
-              <h2 className="text-lg font-bold text-[var(--color-charcoal)] mb-4 uppercase tracking-wide">Historical Timeline Logs</h2>
-              <div className="space-y-4 max-h-[380px] overflow-y-auto pr-2">
-                {symptomLogs.length === 0 ? (
-                  <p className="text-xs font-semibold text-gray-400 text-center py-6">No historical entries.</p>
-                ) : (
-                  symptomLogs.map((log, index) => (
-                    <div key={log.id || index} className="border-l-4 border-[var(--color-crimson)] bg-gray-50/50 p-4 rounded-r-xl border border-gray-100 flex flex-col md:flex-row justify-between gap-2">
-                      <div className="space-y-1">
-                        <div className="flex items-center gap-3"><span className="text-xs font-bold text-gray-400">{log.date}</span><span className="bg-red-100 text-[var(--color-crimson)] text-[0.65rem] px-2 py-0.5 rounded font-black">PAIN: {log.pain_level}/10</span></div>
-                        <p className="text-sm text-gray-700 font-medium">{log.notes || "No extra commentary recorded."}</p>
-                      </div>
-                      <div className="flex md:flex-col gap-2 items-start md:items-end justify-start text-[0.7rem] font-bold text-gray-400 uppercase">
-                        <span>Flow: <strong className="text-gray-700">{log.bleeding}</strong></span>
-                        <span>Energy: <strong className="text-gray-700">{log.fatigue}</strong></span>
+                      <div className="bg-white p-3 rounded-lg border border-red-100/80">
+                        <span className="block text-[0.65rem] font-bold text-gray-400 uppercase tracking-wider mb-1">
+                          Clinical NLP Insight:
+                        </span>
+                        <p className="text-xs text-gray-700 font-medium leading-relaxed whitespace-pre-line">
+                          {explanation}
+                        </p>
                       </div>
                     </div>
-                  ))
-                )}
-              </div>
-            </section>
-          </div>
+                  );
+                })
+              )}
+            </div>
+          </section>
 
-          <section className="bg-white p-6 rounded-2xl shadow-sm border border-[rgba(0,0,0,0.03)] h-fit">
+          {/* Pelvic Imaging Diagnostic Log Section (Now Full Width) */}
+          <section className="bg-white p-6 rounded-2xl shadow-sm border border-[rgba(0,0,0,0.03)] w-full">
             <h2 className="text-lg font-bold text-[var(--color-charcoal)] mb-2 uppercase tracking-wide">Pelvic Imaging Diagnostic Log</h2>
             <p className="text-xs text-gray-500 mb-4">Maintain an uncompromised chain of history records for clinical reference.</p>
             <form onSubmit={handleUploadSubmit} className="space-y-4">
@@ -406,7 +380,6 @@ export default function PatientDashboard() {
               <button type="submit" className="w-full bg-gray-800 text-white font-bold py-2.5 rounded-xl text-xs uppercase tracking-wider hover:bg-gray-900 transition-colors">Confirm Document Chain Addition</button>
             </form>
             
-            {/* Display MRI Image Link + Stored Model Scan Note */}
             <div className="mt-4 pt-4 border-t border-gray-100 space-y-3">
               <h4 className="text-xs font-bold text-gray-400 uppercase tracking-wider">Stored Imaging Repository</h4>
               {scans.length === 0 ? (
@@ -430,6 +403,53 @@ export default function PatientDashboard() {
                     </div>
                   );
                 })
+              )}
+            </div>
+          </section>
+
+                    {/* Log Daily Progress */}
+          <section className="bg-white p-6 rounded-2xl shadow-sm border border-[rgba(0,0,0,0.03)] w-full">
+            <h2 className="text-lg font-bold text-[var(--color-charcoal)] mb-2 uppercase tracking-wide">Log Daily Progress</h2>
+            <form onSubmit={handleAddLog} className="grid grid-cols-1 md:grid-cols-3 gap-4 bg-gray-50 p-4 rounded-xl border border-gray-100">
+              <div className="flex flex-col gap-1">
+                <label className="text-[0.75rem] font-bold text-gray-500 uppercase">Pain Intensity ({newLog.painLevel}/10)</label>
+                <input type="range" min="0" max="10" value={newLog.painLevel} onChange={(e) => setNewLog({...newLog, painLevel: parseInt(e.target.value)})} className="w-full accent-[var(--color-crimson)] h-2 bg-gray-200 rounded-lg cursor-pointer mt-2" />
+              </div>
+              <div className="flex flex-col gap-1">
+                <label className="text-[0.75rem] font-bold text-gray-500 uppercase">Cycle Bleeding</label>
+                <select value={newLog.bleeding} onChange={(e) => setNewLog({...newLog, bleeding: e.target.value})} className="rounded-lg border border-gray-200 bg-white p-2 text-sm focus:outline-none focus:border-gray-400"><option value="None">None</option><option value="Spotting">Spotting</option><option value="Light">Light</option><option value="Moderate">Moderate</option><option value="Heavy">Heavy</option></select>
+              </div>
+              <div className="flex flex-col gap-1">
+                <label className="text-[0.75rem] font-bold text-gray-500 uppercase">Fatigue Severity</label>
+                <select value={newLog.fatigue} onChange={(e) => setNewLog({...newLog, fatigue: e.target.value})} className="rounded-lg border border-gray-200 bg-white p-2 text-sm focus:outline-none focus:border-gray-400"><option value="Low">Low Fatigue</option><option value="Moderate">Moderate Fatigue</option><option value="Severe">Severe Fatigue</option></select>
+              </div>
+              <div className="md:col-span-3 flex flex-col gap-1">
+                <label className="text-[0.75rem] font-bold text-gray-500 uppercase">Track Progress Notes & Symptoms</label>
+                <input type="text" value={newLog.notes} onChange={(e) => setNewLog({...newLog, notes: e.target.value})} placeholder="E.g., tracking pain spikes post meals, specific flares..." className="rounded-lg border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:border-gray-400" />
+              </div>
+              <div className="md:col-span-3"><button type="submit" className="w-full bg-[var(--color-crimson)] text-white text-xs font-bold uppercase tracking-wider py-2.5 rounded-lg hover:opacity-95 transition-opacity">Commit Tracking Unit</button></div>
+            </form>
+          </section>
+
+          {/* Historical Timeline Logs */}
+          <section className="bg-white p-6 rounded-2xl shadow-sm border border-[rgba(0,0,0,0.03)] w-full">
+            <h2 className="text-lg font-bold text-[var(--color-charcoal)] mb-4 uppercase tracking-wide">Historical Timeline Logs</h2>
+            <div className="space-y-4 max-h-[380px] overflow-y-auto pr-2">
+              {symptomLogs.length === 0 ? (
+                <p className="text-xs font-semibold text-gray-400 text-center py-6">No historical entries.</p>
+              ) : (
+                symptomLogs.map((log, index) => (
+                  <div key={log.id || index} className="border-l-4 border-[var(--color-crimson)] bg-gray-50/50 p-4 rounded-r-xl border border-gray-100 flex flex-col md:flex-row justify-between gap-2">
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-3"><span className="text-xs font-bold text-gray-400">{log.date}</span><span className="bg-red-100 text-[var(--color-crimson)] text-[0.65rem] px-2 py-0.5 rounded font-black">PAIN: {log.pain_level}/10</span></div>
+                      <p className="text-sm text-gray-700 font-medium">{log.notes || "No extra commentary recorded."}</p>
+                    </div>
+                    <div className="flex md:flex-col gap-2 items-start md:items-end justify-start text-[0.7rem] font-bold text-gray-400 uppercase">
+                      <span>Flow: <strong className="text-gray-700">{log.bleeding}</strong></span>
+                      <span>Energy: <strong className="text-gray-700">{log.fatigue}</strong></span>
+                    </div>
+                  </div>
+                ))
               )}
             </div>
           </section>

@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 interface Message {
   id?: number;
   text: string;
   sender: 'user' | 'bot';
+  nlpIntent?: string;
 }
 
 export default function ChatBox() {
@@ -13,50 +14,15 @@ export default function ChatBox() {
   ]);
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  const currentPatientId = localStorage.getItem("patientId") || "1";
-
-  // Helper function strictly using "Token <token_string>"
-  const getAuthHeaders = () => {
-    const token = localStorage.getItem("userToken");
-    const headers: Record<string, string> = {
-      "Content-Type": "application/json"
-    };
-
-    if (token) {
-      headers["Authorization"] = `Token ${token}`;
-    }
-
-    return headers;
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
   useEffect(() => {
-    const fetchChatHistory = async () => {
-      try {
-        const response = await fetch(`http://127.0.0.1:8000/api/patients/chat/?patient=${currentPatientId}`, {
-          headers: getAuthHeaders()
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          if (Array.isArray(data) && data.length > 0) {
-            const formattedMessages: Message[] = data.map((msg: any) => ({
-              id: msg.id,
-              text: msg.message,
-              sender: msg.sender
-            }));
-            setMessages(formattedMessages);
-          }
-        }
-      } catch (error) {
-        console.error("Failed to load conversation history:", error);
-      }
-    };
-
-    if (isOpen) {
-      fetchChatHistory();
-    }
-  }, [isOpen, currentPatientId]);
+    scrollToBottom();
+  }, [messages, isLoading]);
 
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -72,28 +38,30 @@ export default function ChatBox() {
     try {
       const response = await fetch("http://127.0.0.1:8000/api/patients/chat/", {
         method: "POST",
-        headers: getAuthHeaders(),
+        headers: {
+          "Content-Type": "application/json"
+        },
         body: JSON.stringify({
-          patient: parseInt(currentPatientId, 10),
           message: userText
         })
       });
 
       if (response.ok) {
         const data = await response.json();
-        const botResponseText = data.bot_message ? data.bot_message.message : (data.message || "Message received.");
+        
         const botMsg: Message = {
-          id: data.bot_message?.id || data.id,
-          text: botResponseText,
-          sender: 'bot'
+          text: data.bot_message?.message || "Response generated.",
+          sender: 'bot',
+          nlpIntent: data.bot_message?.nlp_intent
         };
+
         setMessages((prev) => [...prev, botMsg]);
       } else {
         const errorData = await response.json().catch(() => null);
-        console.error("Django Chat API Error:", response.status, errorData);
+        console.error("Django Chat NLP Error:", response.status, errorData);
         setMessages((prev) => [
           ...prev,
-          { text: `Error ${response.status}: Failed to process message.`, sender: 'bot' }
+          { text: `Error ${response.status}: Failed to process clinical message.`, sender: 'bot' }
         ]);
       }
     } catch (error) {
@@ -113,41 +81,48 @@ export default function ChatBox() {
         <button
           onClick={() => setIsOpen(true)}
           style={{ background: 'var(--color-amber)', color: 'var(--color-blush)' }}
-          className="flex h-14 w-14 items-center justify-center rounded-full shadow-lg hover:scale-105 transition-transform cursor-pointer"
+          className="flex h-14 w-14 items-center justify-center rounded-full shadow-lg hover:scale-105 transition-transform cursor-pointer text-xl"
         >
           💬
         </button>
       )}
 
       {isOpen && (
-        <div className="flex h-96 w-80 flex-col rounded-2xl bg-white shadow-2xl border border-gray-100 overflow-hidden">
+        <div className="flex h-[28rem] w-80 flex-col rounded-2xl bg-white shadow-2xl border border-gray-100 overflow-hidden">
           <div 
-            style={{ background: 'var(--color-crimson)', color: 'var(--color-blush)' }} 
+            style={{ background: 'var(--color-crimson)', color: 'white' }} 
             className="flex items-center justify-between p-4 font-bold"
           >
-            <span>Her Matters Support</span>
+            <span>Her Matters NLP Assistant</span>
             <button onClick={() => setIsOpen(false)} className="hover:opacity-80 text-xl cursor-pointer">&times;</button>
           </div>
 
           <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-gray-50">
             {messages.map((msg, index) => (
               <div
-                key={msg.id || index}
-                className={`max-w-[80%] rounded-2xl p-3 text-sm ${
+                key={index}
+                className={`max-w-[85%] rounded-2xl p-3 text-sm leading-relaxed ${
                   msg.sender === 'user'
                     ? 'ml-auto text-white'
-                    : 'bg-white text-gray-800 border border-gray-200'
+                    : 'bg-white text-gray-800 border border-gray-200 shadow-sm'
                 }`}
                 style={msg.sender === 'user' ? { background: 'var(--color-crimson)' } : {}}
               >
                 {msg.text}
               </div>
             ))}
+            
+            {/* Thinking Indicator Dots */}
             {isLoading && (
-              <div className="max-w-[80%] rounded-2xl p-3 text-sm bg-white text-gray-400 italic border border-gray-200">
-                Processing NLP analysis...
+              <div className="max-w-[85%] rounded-2xl p-3 bg-white text-gray-500 border border-gray-200 shadow-sm w-fit">
+                <span className="flex items-center space-x-1">
+                  <span className="h-2 w-2 rounded-full bg-gray-400 animate-bounce" style={{ animationDelay: '0ms' }}></span>
+                  <span className="h-2 w-2 rounded-full bg-gray-400 animate-bounce" style={{ animationDelay: '150ms' }}></span>
+                  <span className="h-2 w-2 rounded-full bg-gray-400 animate-bounce" style={{ animationDelay: '300ms' }}></span>
+                </span>
               </div>
             )}
+            <div ref={messagesEndRef} />
           </div>
 
           <form onSubmit={handleSendMessage} className="flex border-t border-gray-200 p-2 bg-white">
@@ -155,7 +130,7 @@ export default function ChatBox() {
               type="text"
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
-              placeholder="Type your message..."
+              placeholder="Ask an anonymous question..."
               disabled={isLoading}
               className="flex-1 rounded-xl border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:border-red-400"
             />

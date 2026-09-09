@@ -8,6 +8,9 @@ export default function Questionnaire({ onBackToHome }: QuestionnaireProps) {
   const [currentStep, setCurrentStep] = useState(0);
   const [answers, setAnswers] = useState<Record<string, any>>({});
   const [showResults, setShowResults] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [analysisResult, setAnalysisResult] = useState<any>(null);
 
   const steps = [
     {
@@ -203,7 +206,7 @@ export default function Questionnaire({ onBackToHome }: QuestionnaireProps) {
       ]
     }
   ];
-    
+
   const handleRadioScaleChange = (questionId: string, value: any) => {
     setAnswers((prev) => ({ ...prev, [questionId]: value }));
   };
@@ -219,36 +222,113 @@ export default function Questionnaire({ onBackToHome }: QuestionnaireProps) {
     });
   };
 
+  const submitAssessment = async () => {
+    setLoading(true);
+    setErrorMessage("");
+
+    const token = localStorage.getItem("userToken");
+    const patientId = localStorage.getItem("patientId");
+
+    let endpoint = "http://127.0.0.1:8000/api/questionnaire/anonymous-analyze/";
+    let headers: Record<string, string> = { "Content-Type": "application/json" };
+    
+    // Check authentication token type
+    if (token) {
+      const isJwt = token.includes(".");
+      const authPrefix = isJwt ? "Bearer" : "Token";
+      headers["Authorization"] = `${authPrefix} ${token}`;
+      endpoint = "http://127.0.0.1:8000/api/patients/questionnaire/";
+    }
+
+    const payload = {
+      patient: patientId ? parseInt(patientId) : null,
+      raw_responses: answers
+    };
+
+    try {
+      const response = await fetch(endpoint, {
+        method: "POST",
+        headers,
+        body: JSON.stringify(payload)
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setAnalysisResult(data.model_output || data);
+        setShowResults(true);
+      } else {
+        const err = await response.json().catch(() => null);
+        setErrorMessage(err?.detail || err?.error || "Failed to process assessment responses.");
+      }
+    } catch (error) {
+      console.error("Submission Error:", error);
+      setErrorMessage("Error connecting to backend server.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleNext = () => {
     if (currentStep < steps.length - 1) {
       setCurrentStep((prev) => prev + 1);
-      window.scrollTo({top:0, behavior:"smooth"});
+      window.scrollTo({ top: 0, behavior: "smooth" });
     } else {
-      setShowResults(true);
+      submitAssessment();
     }
   };
 
   const handleBack = () => {
     if (currentStep > 0) {
       setCurrentStep((prev) => prev - 1);
-      window.scrollTo({top:0, behavior:"smooth"});
+      window.scrollTo({ top: 0, behavior: "smooth" });
     } else {
       onBackToHome();
     }
   };
 
+  // Step 4: Render Assessment Results Screen
   if (showResults) {
+    const esiTier = analysisResult?.esi_result?.tier || analysisResult?.risk_level || "Analysis Complete";
+    const explanation = analysisResult?.explanation || analysisResult?.summary || "Assessment calculated successfully.";
+    const systems = analysisResult?.esi_result?.systems_affected || [];
+
     return (
-      <div style={{ padding: "30px", fontFamily: "sans-serif", maxWidth: "600px", margin: "0 auto" }}>
-        <h2 style={{ color: "#bd4f6c" }}>Assessment Complete</h2>
-        <p>Your responses have been successfully logged for analytical screening.</p>
-        <div style={{ background: "#f9f9f9", padding: "15px", borderRadius: "8px", margin: "20px 0" }}>
-          <h4>Responses Captured:</h4>
-          <p>Total Items Addressed: <strong>{Object.keys(answers).length}</strong></p>
+      <div style={{ padding: "30px", fontFamily: "sans-serif", maxWidth: "700px", margin: "0 auto" }}>
+        <h2 style={{ color: "#bd4f6c", textTransform: "uppercase" }}>Assessment Analysis Result</h2>
+        <p style={{ color: "#666", fontSize: "14px" }}>Screening results processed via AI evaluation model.</p>
+        
+        <div style={{ background: "#fff5f5", borderLeft: "5px solid #bd4f6c", padding: "20px", borderRadius: "8px", margin: "20px 0" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px" }}>
+            <span style={{ fontSize: "12px", fontWeight: "bold", textTransform: "uppercase", color: "#888" }}>
+              Assessment Tier
+            </span>
+            <span style={{ backgroundColor: "#bd4f6c", color: "#fff", padding: "4px 12px", borderRadius: "20px", fontSize: "12px", fontWeight: "bold" }}>
+              {esiTier}
+            </span>
+          </div>
+
+          <h4 style={{ margin: "10px 0 5px", color: "#333" }}>Clinical Recommendation & Insight:</h4>
+          <p style={{ color: "#444", fontSize: "14px", lineHeight: "1.6", whiteSpace: "pre-line" }}>
+            {explanation}
+          </p>
+
+          {systems.length > 0 && (
+            <div style={{ marginTop: "15px" }}>
+              <strong style={{ fontSize: "12px", textTransform: "uppercase", color: "#888" }}>Systems Flagged:</strong>
+              <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", marginTop: "5px" }}>
+                {systems.map((s: string, idx: number) => (
+                  <span key={idx} style={{ background: "#eee", padding: "3px 8px", borderRadius: "4px", fontSize: "12px", color: "#555" }}>
+                    {s}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
+
         <button 
           onClick={onBackToHome}
-          style={{ padding: "10px 20px", background: "#bd4f6c", color: "#fff", border: "none", borderRadius: "5px", cursor: "pointer" }}
+          style={{ padding: "12px 24px", background: "#bd4f6c", color: "#fff", border: "none", borderRadius: "6px", cursor: "pointer", fontWeight: "bold" }}
         >
           Return to Dashboard
         </button>
@@ -261,10 +341,8 @@ export default function Questionnaire({ onBackToHome }: QuestionnaireProps) {
   return (
     <div style={{ padding: "30px", fontFamily: "sans-serif", maxWidth: "700px", margin: "0 auto" }}>
       
-      {/* Disclaimers appear right at the top of Section 1 */}
       {currentStep === 0 && (
         <div style={{ marginBottom: "25px", display: "flex", flexDirection: "column", gap: "12px" }}>
-          {/* Under 18 Guardian Warning */}
           <div style={{ padding: "16px", backgroundColor: "#f0f4f8", borderLeft: "4px solid #2b6cb0", borderRadius: "6px", color: "#2d3748", fontSize: "0.85rem", lineHeight: "1.5" }}>
             <strong style={{ color: "#2b6cb0", display: "block", marginBottom: "4px", fontSize: "0.95rem" }}>
               Age Notice
@@ -272,13 +350,18 @@ export default function Questionnaire({ onBackToHome }: QuestionnaireProps) {
             <strong>If you are under 18 years old, a parent or legal guardian should help you answer this questionnaire.</strong>
           </div>
 
-          {/* Medical Disclaimer */}
           <div style={{ padding: "16px", backgroundColor: "#fff5f5", borderLeft: "4px solid #bd4f6c", borderRadius: "6px", color: "#4a5568", fontSize: "0.85rem", lineHeight: "1.5" }}>
             <strong style={{ color: "#bd4f6c", display: "block", marginBottom: "4px", fontSize: "0.95rem" }}>
               Medical Disclaimer
             </strong>
             <strong>This assessment tool is for informational purposes only and does not provide a formal medical diagnosis. The information gathered here should not replace professional medical advice, diagnosis, or treatment. If you are experiencing severe symptoms or a medical emergency, please seek immediate medical assistance from a qualified healthcare professional.</strong>
           </div>
+        </div>
+      )}
+
+      {errorMessage && (
+        <div style={{ backgroundColor: "#fee2e2", border: "1px solid #f87171", color: "#991b1b", padding: "12px", borderRadius: "6px", marginBottom: "20px", fontSize: "14px" }}>
+          {errorMessage}
         </div>
       )}
 
@@ -292,8 +375,7 @@ export default function Questionnaire({ onBackToHome }: QuestionnaireProps) {
           <div key={q.id} style={{ borderBottom: "1px solid #eee", paddingBottom: "20px" }}>
             <p style={{ fontWeight: "bold", marginBottom: "10px" }}>{q.text}</p>
             
-            {/* RADIO INPUT MATRIX question 1 */}
-            {q.type === "radio"  && q.id == "q1_severity" && q.options && (
+            {q.type === "radio" && q.id === "q1_severity" && q.options && (
               <div style={{ display: "flex", flexDirection: "row", gap: "8px", flexWrap: "wrap" }}>
                 {q.options.map((opt) => (
                   <label key={opt} style={{ display: "flex", alignItems: "center", gap: "8px", cursor: "pointer" }}>
@@ -309,7 +391,7 @@ export default function Questionnaire({ onBackToHome }: QuestionnaireProps) {
                 ))}
               </div>
             )}         
-            {/* RADIO INPUT MATRIX */}
+            
             {q.type === "radio" && q.id !== "q1_severity" && q.options && (
               <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
                 {q.options.map((opt) => (
@@ -327,7 +409,6 @@ export default function Questionnaire({ onBackToHome }: QuestionnaireProps) {
               </div>
             )}
             
-            {/* CHECKBOX MULTI-SELECT MATRIX */}
             {q.type === "checkbox" && q.options && (
               <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
                 {q.options.map((opt) => (
@@ -346,7 +427,6 @@ export default function Questionnaire({ onBackToHome }: QuestionnaireProps) {
           </div>
         ))}
 
-        {/* Dynamic Section-Specific Additional Notes Box */}
         <div style={{ paddingBottom: "20px" }}>
           <p style={{ fontWeight: "bold", marginBottom: "10px" }}>
             Please provide any additional symptoms, triggers, or specific details regarding this section:
@@ -369,19 +449,20 @@ export default function Questionnaire({ onBackToHome }: QuestionnaireProps) {
         </div>
       </div>
 
-      {/* NAVIGATION CONTROLS */}
       <div style={{ display: "flex", justifyContent: "space-between", marginTop: "30px" }}>
         <button
           onClick={handleBack}
+          disabled={loading}
           style={{ padding: "10px 20px", background: "#ccc", border: "none", borderRadius: "5px", cursor: "pointer" }}
         >
           {currentStep === 0 ? "Cancel" : "Back"}
         </button>
         <button
           onClick={handleNext}
+          disabled={loading}
           style={{ padding: "10px 20px", background: "#bd4f6c", color: "#fff", border: "none", borderRadius: "5px", cursor: "pointer" }}
         >
-          {currentStep === steps.length - 1 ? "Submit Assessment" : "Next Section"}
+          {loading ? "Analyzing..." : currentStep === steps.length - 1 ? "Submit Assessment" : "Next Section"}
         </button>
       </div>
     </div>
