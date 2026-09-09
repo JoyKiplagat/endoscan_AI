@@ -1,0 +1,36 @@
+{
+  "MTSamples": {
+    "status": " Loaded",
+    "total_records": 4999,
+    "gynaecology_records": 541,
+    "columns": [
+      "description",
+      "medical_specialty",
+      "sample_name",
+      "transcription",
+      "keywords"
+    ]
+  },
+  "NCBI NER": {
+    "status": " Loaded",
+    "train_records": 15488,
+    "test_records": 5737,
+    "columns": [
+      "tokens",
+      "tags",
+      "sentence_id"
+    ]
+  },
+  "GLENDA": {
+    "status": " Downloaded",
+    "local_path": "/home/joy/.cache/huggingface/hub/datasets--MFreidank--glenda/snapshots/e9195188dbd6939e10785e3ed9ee1c513731c9bc"
+  },
+  "PubMedBERT": {
+    "status": " Loaded",
+    "vocab_size": 30522
+  },
+  "Biomedical NER": {
+    "status": "\u2705 Loaded",
+    "model": "d4data/biomedical-ner-all"
+  }
+}
