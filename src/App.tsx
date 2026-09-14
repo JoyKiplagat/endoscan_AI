@@ -31,6 +31,7 @@ import UploadDocs from "./UploadDocs";
 import Auth from "./Auth"; 
 import ChatBox from "./ChatBox"; 
 import PatientDashboard from "./dashboard";
+import { BlogPage, BlogPostDetail } from "./Blog";
 
 // 1. A quick Protected Route component
 // Replace this mock condition with your actual authentication logic later (e.g., checking localStorage or global context)
@@ -63,7 +64,9 @@ export default function App() {
               </ProtectedRoute>
             } 
           />
-
+          {/* Blog Routes */}
+          <Route path="/Blog" element={<BlogPage />} />
+          <Route path="/Blog/:id" element={<BlogPostDetail />} />
           <Route path="/questionnaire" element={<Questionnaire onBackToHome={() => window.location.href = "/#Home"} />} />
           <Route path="/questionnaire1" element={<Questionnaire1 onBackToHome={() => window.location.href = "/dashboard"} />} />
           <Route path="/upload-docs" element={<UploadDocs onBackToHome={() => window.location.href = "/#Home"} />} />

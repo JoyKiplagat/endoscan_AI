@@ -12,6 +12,10 @@ export default function Questionnaire({ onBackToHome }: QuestionnaireProps) {
   const [errorMessage, setErrorMessage] = useState("");
   const [analysisResult, setAnalysisResult] = useState<any>(null);
 
+  // --- Dynamic Follow-up State Hooks ---
+  const [isFollowUpStage, setIsFollowUpStage] = useState(false);
+  const [followUpAnswer, setFollowUpAnswer] = useState("");
+
   const steps = [
     {
       title: "Section 1: Menstrual History & Pelvic Pain Characteristics",
@@ -42,7 +46,8 @@ export default function Questionnaire({ onBackToHome }: QuestionnaireProps) {
             "Only during my period (cyclical pain)",
             "Starts a few days before my period and goes away during bleeding",
             "Continuous/random pain throughout the month (non-cyclical pain)",
-            "Primarily during ovulation (mid-cycle)"
+            "Primarily during ovulation (mid-cycle)",
+            "None of the above"
           ]
         },
         {
@@ -51,7 +56,8 @@ export default function Questionnaire({ onBackToHome }: QuestionnaireProps) {
           text: "3a. At what age did your painful periods begin?",
           options: [
             "Since my very first period (teenage years)",
-            "Developed later in my 20s or 30s"
+            "Developed later in my 20s or 30s",
+            "None of the above"
           ]
         },
         {
@@ -83,7 +89,8 @@ export default function Questionnaire({ onBackToHome }: QuestionnaireProps) {
             "Normal flow with no bleeding between periods",
             "Heavy flow (flooding through products, changing pads/tampons every 1–2 hours)",
             "Regular spotting or bleeding between periods",
-            "Both heavy flow and bleeding between periods"
+            "Both heavy flow and bleeding between periods",
+            "None of the above"
           ]
         }
       ]
@@ -136,7 +143,8 @@ export default function Questionnaire({ onBackToHome }: QuestionnaireProps) {
             "Trying for less than 6 months",
             "Trying for 6 to 12 months without success",
             "Trying for more than 12 months without success",
-            "I have previously experienced unexplained infertility or pregnancy loss"
+            "I have previously experienced unexplained infertility or pregnancy loss",
+            "None of the above "
           ]
         },
         {
@@ -165,7 +173,8 @@ export default function Questionnaire({ onBackToHome }: QuestionnaireProps) {
             "Yes, confirmed endometriosis",
             "Yes, severe period pain or suspected endometriosis (but never formally diagnosed)",
             "No known family history",
-            "Unknown / I am adopted"
+            "Unknown",
+            "None of the above"
           ]
         },
         {
@@ -222,50 +231,95 @@ export default function Questionnaire({ onBackToHome }: QuestionnaireProps) {
     });
   };
 
-  const submitAssessment = async () => {
+  const constructPayload = (overrideUserInput?: string) => {
+    const textSegments: string[] = [];
+    const historyFlags: string[] = [];
+
+    Object.entries(answers).forEach(([key, val]) => {
+      if (!val) return;
+
+      if (key.endsWith("_notes") && typeof val === "string") {
+        textSegments.push(`Section Note: ${val.trim()}`);
+      } else if (Array.isArray(val) && val.length > 0) {
+        textSegments.push(`${val.join(", ")}`);
+      } else if (typeof val === "string") {
+        textSegments.push(val);
+      }
+    });
+
+    const compiledUserInput = overrideUserInput || textSegments.join(". ");
+    const durationCode = answers["q2_cyclicity"]?.includes("Continuous") ? "chronic" : "acute";
+
+    if (answers["q11_family"]?.includes("Yes")) {
+      historyFlags.push("maternal_endo");
+    }
+
+    return {
+      user_input: compiledUserInput || "Patient reports cyclic pelvic pain and menstrual distress.",
+      duration_code: durationCode,
+      history_flags: historyFlags,
+      history_text: answers["q3_additional_notes"] || ""
+    };
+  };
+
+  const submitAssessment = async (finalUserInput?: string) => {
     setLoading(true);
     setErrorMessage("");
 
-    const token = localStorage.getItem("userToken");
-    const patientId = localStorage.getItem("patientId");
+    const reliableInput = finalUserInput || constructPayload().user_input || "";
+    const payload = constructPayload(reliableInput.trim());
 
-    let endpoint = "http://127.0.0.1:8000/api/questionnaire/anonymous-analyze/";
-    let headers: Record<string, string> = { "Content-Type": "application/json" };
-    
-    // Check authentication token type
-    if (token) {
-      const isJwt = token.includes(".");
-      const authPrefix = isJwt ? "Bearer" : "Token";
-      headers["Authorization"] = `${authPrefix} ${token}`;
-      endpoint = "http://127.0.0.1:8000/api/patients/questionnaire/";
-    }
-
-    const payload = {
-      patient: patientId ? parseInt(patientId) : null,
-      raw_responses: answers
+    const safePayload = {
+      user_input: payload.user_input || "Patient reports cyclic pelvic pain tracking history.",
+      duration_code: payload.duration_code || "DM001",
+      history_flags: payload.history_flags || [],
+      history_text: answers["q3_additional_notes"]?.trim() || ""
     };
 
     try {
-      const response = await fetch(endpoint, {
+      const response = await fetch("http://127.0.0.1:8000/api/questionnaire/anonymous-analyze/", {
         method: "POST",
-        headers,
-        body: JSON.stringify(payload)
+        headers: { 
+          "Content-Type": "application/json" 
+        },
+        body: JSON.stringify(safePayload)
       });
 
+      const data = await response.json();
+
       if (response.ok) {
-        const data = await response.json();
-        setAnalysisResult(data.model_output || data);
+        setAnalysisResult({
+          score: data.score,
+          raw_score: data.raw_score,
+          tier: data.tier,
+          matched_symptoms: data.matched_symptoms || [],
+          systems_affected: data.systems_affected || [],
+          explanation: data.explanation || "",
+          alternative_explanation: data.alternative_explanation || "",
+          non_endo_signals: data.non_endo_signals || []
+        });
+        
         setShowResults(true);
       } else {
-        const err = await response.json().catch(() => null);
-        setErrorMessage(err?.detail || err?.error || "Failed to process assessment responses.");
+        setErrorMessage(data?.error || data?.detail || "Failed to process assessment responses.");
       }
     } catch (error) {
-      console.error("Submission Error:", error);
-      setErrorMessage("Error connecting to backend server.");
+      setErrorMessage("Unable to connect to the backend server. Please verify Django is running.");
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleFollowUpSubmit = () => {
+    if (!followUpAnswer.trim()) {
+      setErrorMessage("Please fill out an answer for the follow-up question or click back.");
+      return;
+    }
+
+    const baseText = constructPayload().user_input;
+    const enrichedText = `${baseText}. Additional Clarification: ${followUpAnswer.trim()}`;
+    
+    submitAssessment(enrichedText);
   };
 
   const handleNext = () => {
@@ -278,6 +332,12 @@ export default function Questionnaire({ onBackToHome }: QuestionnaireProps) {
   };
 
   const handleBack = () => {
+    if (isFollowUpStage) {
+      setIsFollowUpStage(false);
+      setErrorMessage("");
+      return;
+    }
+
     if (currentStep > 0) {
       setCurrentStep((prev) => prev - 1);
       window.scrollTo({ top: 0, behavior: "smooth" });
@@ -286,61 +346,288 @@ export default function Questionnaire({ onBackToHome }: QuestionnaireProps) {
     }
   };
 
-  // Step 4: Render Assessment Results Screen
-  if (showResults) {
-    const esiTier = analysisResult?.esi_result?.tier || analysisResult?.risk_level || "Analysis Complete";
-    const explanation = analysisResult?.explanation || analysisResult?.summary || "Assessment calculated successfully.";
-    const systems = analysisResult?.esi_result?.systems_affected || [];
+  // --- RENDERING 1: RESULTS VIEW ---
+  if (showResults && analysisResult) {
+    const matchedSymptoms: string[] = analysisResult.matched_symptoms || [];
+    const systemsAffected: string[] = analysisResult.systems_affected || [];
+    const explanationNarrative: string = analysisResult.explanation || "Symptoms show potential overlap with pelvic health conditions.";
+    const altExplanation: string = analysisResult.alternative_explanation || "Some symptoms may point toward non-endometriosis causes.";
+    const priorityTier: string = (analysisResult.tier || "MODERATE").toUpperCase();
+    const adjustedScore: number = analysisResult.score ?? 7.2;
 
     return (
-      <div style={{ padding: "30px", fontFamily: "sans-serif", maxWidth: "700px", margin: "0 auto" }}>
-        <h2 style={{ color: "#bd4f6c", textTransform: "uppercase" }}>Assessment Analysis Result</h2>
-        <p style={{ color: "#666", fontSize: "14px" }}>Screening results processed via AI evaluation model.</p>
+      <div style={{ padding: "40px 30px", fontFamily: "sans-serif", maxWidth: "750px", margin: "0 auto", color: "#2d3748" }}>
         
-        <div style={{ background: "#fff5f5", borderLeft: "5px solid #bd4f6c", padding: "20px", borderRadius: "8px", margin: "20px 0" }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px" }}>
-            <span style={{ fontSize: "12px", fontWeight: "bold", textTransform: "uppercase", color: "#888" }}>
-              Assessment Tier
-            </span>
-            <span style={{ backgroundColor: "#bd4f6c", color: "#fff", padding: "4px 12px", borderRadius: "20px", fontSize: "12px", fontWeight: "bold" }}>
-              {esiTier}
-            </span>
+        {/* Header Title */}
+        <h4 style={{ 
+          fontSize: "13px", 
+          fontWeight: "700", 
+          color: "#4A5568", 
+          letterSpacing: "0.5px", 
+          textTransform: "uppercase", 
+          marginBottom: "24px" 
+        }}>
+          ASSESSMENT ANALYSIS RESULT
+        </h4>
+
+        {/* Main Content Card with Red Left Border Accent */}
+        <div style={{ 
+          borderLeft: "4px solid #A01235", 
+          paddingLeft: "24px", 
+          marginBottom: "35px" 
+        }}>
+          
+          {/* Top Row: Tier Name (Left) & Score Badge (Right) */}
+          <div style={{ 
+            display: "flex", 
+            justifyContent: "space-between", 
+            alignItems: "flex-start", 
+            marginBottom: "24px" 
+          }}>
+            <div>
+              <span style={{ 
+                fontSize: "11px", 
+                fontWeight: "700", 
+                color: "#718096", 
+                letterSpacing: "0.5px", 
+                textTransform: "uppercase",
+                display: "block",
+                marginBottom: "4px"
+              }}>
+                ASSESSMENT RISK TIER
+              </span>
+              <h2 style={{ 
+                margin: 0, 
+                fontSize: "20px", 
+                fontWeight: "800", 
+                color: "#77172E", 
+                letterSpacing: "0.5px",
+                textTransform: "uppercase"
+              }}>
+                {priorityTier} TIER
+              </h2>
+            </div>
+
+            <div style={{ textAlign: "right" }}>
+              <span style={{ 
+                fontSize: "11px", 
+                fontWeight: "700", 
+                color: "#718096", 
+                letterSpacing: "0.5px", 
+                textTransform: "uppercase",
+                display: "block",
+                marginBottom: "2px"
+              }}>
+                SCORE
+              </span>
+              <span style={{ 
+                fontSize: "22px", 
+                fontWeight: "800", 
+                color: "#1A202C" 
+              }}>
+                {adjustedScore} / 100
+              </span>
+            </div>
           </div>
 
-          <h4 style={{ margin: "10px 0 5px", color: "#333" }}>Clinical Recommendation & Insight:</h4>
-          <p style={{ color: "#444", fontSize: "14px", lineHeight: "1.6", whiteSpace: "pre-line" }}>
-            {explanation}
-          </p>
+          {/* Endometriosis Presentation */}
+          <div style={{ marginBottom: "18px" }}>
+            <h5 style={{ 
+              margin: "0 0 6px 0", 
+              fontSize: "14px", 
+              fontWeight: "600", 
+              color: "#4A5568" 
+            }}>
+              Endometriosis Presentation:
+            </h5>
+            <p style={{ 
+              margin: 0, 
+              fontSize: "14px", 
+              color: "#4A5568", 
+              lineHeight: "1.4" 
+            }}>
+              {explanationNarrative}
+            </p>
+          </div>
 
-          {systems.length > 0 && (
-            <div style={{ marginTop: "15px" }}>
-              <strong style={{ fontSize: "12px", textTransform: "uppercase", color: "#888" }}>Systems Flagged:</strong>
-              <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", marginTop: "5px" }}>
-                {systems.map((s: string, idx: number) => (
-                  <span key={idx} style={{ background: "#eee", padding: "3px 8px", borderRadius: "4px", fontSize: "12px", color: "#555" }}>
-                    {s}
+          {/* Differential Considerations */}
+          {/* <div style={{ marginBottom: "28px" }}>
+            <h5 style={{ 
+              margin: "0 0 6px 0", 
+              fontSize: "14px", 
+              fontWeight: "600", 
+              color: "#4A5568" 
+            }}>
+              Differential Considerations:
+            </h5>
+            <p style={{ 
+              margin: 0, 
+              fontSize: "14px", 
+              color: "#4A5568", 
+              lineHeight: "1.4" 
+            }}>
+              {altExplanation}
+            </p>
+          </div> */}
+
+          {/* Matched Symptoms Section */}
+          <div style={{ marginBottom: "24px" }}>
+            <span style={{ 
+              fontSize: "11px", 
+              fontWeight: "700", 
+              color: "#718096", 
+              letterSpacing: "0.5px", 
+              textTransform: "uppercase",
+              display: "block",
+              marginBottom: "10px"
+            }}>
+              MATCHED SYMPTOMs:
+            </span>
+            <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+              {matchedSymptoms.length > 0 ? (
+                matchedSymptoms.map((symptom, idx) => (
+                  <span 
+                    key={idx} 
+                    style={{ 
+                      backgroundColor: "#E2E8F0", 
+                      color: "#4A5568", 
+                      padding: "6px 12px", 
+                      borderRadius: "4px", 
+                      fontSize: "13px",
+                      textTransform: "lowercase" 
+                    }}
+                  >
+                    {symptom}
                   </span>
-                ))}
-              </div>
+                ))
+              ) : (
+                <span style={{ fontSize: "13px", color: "#A0AEC0" }}>None detected</span>
+              )}
             </div>
-          )}
+          </div>
+
+          {/* Organ Systems Flagged Section */}
+          <div>
+            <span style={{ 
+              fontSize: "11px", 
+              fontWeight: "700", 
+              color: "#718096", 
+              letterSpacing: "0.5px", 
+              textTransform: "uppercase",
+              display: "block",
+              marginBottom: "10px"
+            }}>
+              ORGAN SYSTEMS FLAGGED:
+            </span>
+            <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+              {systemsAffected.length > 0 ? (
+                systemsAffected.map((system, idx) => (
+                  <span 
+                    key={idx} 
+                    style={{ 
+                      backgroundColor: "#E2E8F0", 
+                      color: "#4A5568", 
+                      padding: "6px 12px", 
+                      borderRadius: "4px", 
+                      fontSize: "13px",
+                      textTransform: "lowercase" 
+                    }}
+                  >
+                    {system}
+                  </span>
+                ))
+              ) : (
+                <span style={{ fontSize: "13px", color: "#A0AEC0" }}>None flagged</span>
+              )}
+            </div>
+          </div>
+
         </div>
 
+        {/* Dashboard Return Button */}
         <button 
           onClick={onBackToHome}
-          style={{ padding: "12px 24px", background: "#bd4f6c", color: "#fff", border: "none", borderRadius: "6px", cursor: "pointer", fontWeight: "bold" }}
+          style={{ 
+            padding: "12px 24px", 
+            backgroundColor: "#A01235", 
+            color: "#FFFFFF", 
+            border: "none", 
+            borderRadius: "6px", 
+            cursor: "pointer", 
+            fontWeight: "700",
+            fontSize: "14px"
+          }}
         >
           Return to Dashboard
         </button>
+
       </div>
     );
   }
 
+  // --- RENDERING 2: INTERSTITIAL FOLLOW-UP QUESTION VIEW ---
+  if (isFollowUpStage && analysisResult?.next_question) {
+    return (
+      <div style={{ padding: "30px", fontFamily: "sans-serif", maxWidth: "700px", margin: "0 auto" }}>
+        <div style={{ padding: "16px", backgroundColor: "#f0fff4", borderLeft: "4px solid #38a169", borderRadius: "6px", color: "#276749", fontSize: "0.85rem", marginBottom: "20px" }}>
+          <strong style={{ display: "block", marginBottom: "4px" }}>Clarification Pass Triggered</strong>
+          Our clinical analysis engine requires a bit more context regarding your symptoms to make sure the tracking logs map accurately.
+        </div>
+
+        {errorMessage && (
+          <div style={{ backgroundColor: "#fee2e2", border: "1px solid #f87171", color: "#991b1b", padding: "12px", borderRadius: "6px", marginBottom: "20px", fontSize: "14px" }}>
+            {errorMessage}
+          </div>
+        )}
+
+        <h2 style={{ color: "#bd4f6c", marginBottom: "15px" }}>Additional Question</h2>
+        <p style={{ fontWeight: "bold", fontSize: "16px", color: "#2d3748", marginBottom: "12px", lineHeight: "1.4" }}>
+          {analysisResult.next_question}
+        </p>
+
+        <textarea
+          rows={5}
+          value={followUpAnswer}
+          onChange={(e) => setFollowUpAnswer(e.target.value)}
+          placeholder="Please type your descriptive clarification here..."
+          style={{
+            width: "100%",
+            padding: "12px",
+            borderRadius: "5px",
+            border: "1px solid #cbd5e0",
+            resize: "vertical",
+            fontFamily: "inherit",
+            boxSizing: "border-box",
+            marginBottom: "25px",
+            fontSize: "14px"
+          }}
+        />
+
+        <div style={{ display: "flex", justifyContent: "space-between" }}>
+          <button
+            onClick={handleBack}
+            disabled={loading}
+            style={{ padding: "10px 20px", background: "#ccc", border: "none", borderRadius: "5px", cursor: "pointer" }}
+          >
+            Back to Questionnaire
+          </button>
+          <button
+            onClick={handleFollowUpSubmit}
+            disabled={loading}
+            style={{ padding: "10px 20px", background: "#bd4f6c", color: "#fff", border: "none", borderRadius: "5px", cursor: "pointer", fontWeight: "bold" }}
+          >
+            {loading ? "Re-Evaluating..." : "Submit and Finish"}
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // --- RENDERING 3: STANDARD STEPPED QUESTIONNAIRE VIEW ---
   const currentSection = steps[currentStep];
 
   return (
     <div style={{ padding: "30px", fontFamily: "sans-serif", maxWidth: "700px", margin: "0 auto" }}>
-      
       {currentStep === 0 && (
         <div style={{ marginBottom: "25px", display: "flex", flexDirection: "column", gap: "12px" }}>
           <div style={{ padding: "16px", backgroundColor: "#f0f4f8", borderLeft: "4px solid #2b6cb0", borderRadius: "6px", color: "#2d3748", fontSize: "0.85rem", lineHeight: "1.5" }}>
@@ -462,7 +749,7 @@ export default function Questionnaire({ onBackToHome }: QuestionnaireProps) {
           disabled={loading}
           style={{ padding: "10px 20px", background: "#bd4f6c", color: "#fff", border: "none", borderRadius: "5px", cursor: "pointer" }}
         >
-          {loading ? "Analyzing..." : currentStep === steps.length - 1 ? "Submit Assessment" : "Next Section"}
+          {loading ? "Analyzing Symptoms..." : currentStep === steps.length - 1 ? "Submit Assessment" : "Next Section"}
         </button>
       </div>
     </div>

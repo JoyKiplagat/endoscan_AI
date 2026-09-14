@@ -10,6 +10,7 @@ export default function Questionnaire({ onBackToHome }: QuestionnaireProps) {
   const [showResults, setShowResults] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [analysisResult, setAnalysisResult] = useState<any>(null);
 
   const steps = [
     {
@@ -164,7 +165,8 @@ export default function Questionnaire({ onBackToHome }: QuestionnaireProps) {
             "Yes, confirmed endometriosis",
             "Yes, severe period pain or suspected endometriosis (but never formally diagnosed)",
             "No known family history",
-            "Unknown / I am adopted"
+            "Unknown",
+            "None of the above"
           ]
         },
         {
@@ -226,11 +228,11 @@ export default function Questionnaire({ onBackToHome }: QuestionnaireProps) {
 
     if (currentStep < steps.length - 1) {
       setCurrentStep((prev) => prev + 1);
-      window.scrollTo({ top:0, behavior: "smooth"});
+      window.scrollTo({ top: 0, behavior: "smooth" });
       return;
     }
 
-    const token = localStorage.getItem("userToken");
+    const token = localStorage.getItem("accessToken") || localStorage.getItem("userToken");
 
     if (!token) {
       setErrorMessage("Your session has expired or you are not logged in. Please log in again.");
@@ -243,13 +245,7 @@ export default function Questionnaire({ onBackToHome }: QuestionnaireProps) {
     const authPrefix = isJwt ? "Bearer" : "Token";
 
     const payload = {
-      patient: parseInt(localStorage.getItem("patientId") || "1", 10),
-      raw_responses: answers,
-      model_output: {
-        risk_level: "Evaluation Logged",
-        summary: "Assessment raw responses archived safely in backend.",
-        confidence_score: 0.85
-      }
+      raw_responses: answers
     };
 
     try {
@@ -266,10 +262,11 @@ export default function Questionnaire({ onBackToHome }: QuestionnaireProps) {
 
       if (response.ok) {
         console.log("Model response successfully captured:", data);
+        setAnalysisResult(data.model_output || data);
         setShowResults(true);
       } else {
         console.error(`HTTP Error ${response.status}:`, data);
-        setErrorMessage(data?.detail || `Submission failed with status ${response.status}`);
+        setErrorMessage(data?.detail || data?.error || `Submission failed with status ${response.status}`);
       }
     } catch (error) {
       console.error("Network error:", error);
@@ -282,27 +279,161 @@ export default function Questionnaire({ onBackToHome }: QuestionnaireProps) {
   const handleBack = () => {
     if (currentStep > 0) {
       setCurrentStep((prev) => prev - 1);
-      window.scrollTo({ top: 0, behavior: "smooth"})
+      window.scrollTo({ top: 0, behavior: "smooth" });
     } else {
       onBackToHome();
     }
   };
 
+  // Plain-language translation helpers
+  const simplifyMedicalText = (text: string) => {
+    if (!text) return "";
+    return text
+      .replace(/dyschezia/gi, "painful bowel movements")
+      .replace(/dyspareunia/gi, "painful intercourse")
+      .replace(/catamenial/gi, "period-related")
+      .replace(/etiology/gi, "cause")
+      .replace(/deep infiltrating endometriosis/gi, "deep tissue pelvic inflammation")
+      .replace(/Minimally Invasive Gynecologic Surgeon \(MIGS\)/gi, "pelvic health specialist");
+  };
+
+  const simplifySymptomTag = (tag: string) => {
+    const map: Record<string, string> = {
+      "period pain": "Period pain",
+      "dyschezia": "Painful bowel movements",
+      "dyspareunia": "Painful intercourse",
+      "flooding": "Heavy period bleeding",
+      "catamenial pain": "Period-related nerve pain"
+    };
+    return map[tag.toLowerCase()] || tag;
+  };
+
+  const simplifySystemTag = (system: string) => {
+    const map: Record<string, string> = {
+      "gastrointestinal": "Digestive System",
+      "reproductive": "Reproductive System",
+      "urinary": "Bladder & Urinary Tract",
+      "neurological": "Nerve Health"
+    };
+    return map[system.toLowerCase()] || system;
+  };
+
   if (showResults) {
+    const esiTier = analysisResult?.esi_result?.tier || analysisResult?.risk_level || "MODERATE";
+    const adjustedScore = analysisResult?.esi_result?.adjusted_endo_score || analysisResult?.esi_result?.score || analysisResult?.adjusted_score || "N/A";
+    
+    const rawPresentation = analysisResult?.clinical_perspectives?.endo_possibility || analysisResult?.explanation || analysisResult?.summary || "";
+    const rawDifferential = analysisResult?.clinical_perspectives?.differential_considerations || "";
+    const rawRecommendation = analysisResult?.clinical_perspectives?.recommendations || "";
+
+    const presentationText = simplifyMedicalText(rawPresentation) || 
+      "Your symptoms show patterns commonly linked with pelvic health conditions like endometriosis.";
+    
+    const differentialText = simplifyMedicalText(rawDifferential) || 
+      "Some of your symptoms might overlap with other common pelvic or digestive health conditions.";
+    
+    const recommendationText = simplifyMedicalText(rawRecommendation) || 
+      "Consider scheduling a consultation with an Endometriosis Specialist or Gynecologist for a comprehensive evaluation.";
+
+    const rawMatched = analysisResult?.matched_symptoms || [];
+    const rawSystems = analysisResult?.organ_systems_flagged || [];
+
+    const matchedSymptoms = rawMatched.map(simplifySymptomTag);
+    const organSystems = rawSystems.map(simplifySystemTag);
+
     return (
-      <div style={{ padding: "30px", fontFamily: "sans-serif", maxWidth: "600px", margin: "0 auto" }}>
-        <h2 style={{ color: "#bd4f6c" }}>Assessment Complete</h2>
-        <p>Your responses have been successfully logged and processed by our predictive model.</p>
-        <div style={{ background: "#f9f9f9", padding: "15px", borderRadius: "8px", margin: "20px 0" }}>
-          <h4>Responses Captured:</h4>
-          <p>Total Items Addressed: <strong>{Object.keys(answers).length}</strong></p>
+      <div style={{ padding: "40px 20px", fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif", maxWidth: "800px", margin: "0 auto", color: "#333" }}>
+        
+        <h4 style={{ color: "#666", fontSize: "14px", letterSpacing: "1px", textTransform: "uppercase", marginBottom: "25px" }}>
+          ASSESSMENT ANALYSIS RESULT
+        </h4>
+
+        {/* Top Header Card */}
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "30px" }}>
+          <div>
+            <span style={{ fontSize: "12px", fontWeight: "bold", color: "#666", letterSpacing: "0.5px" }}>ASSESSMENT RISK TIER</span>
+            <h2 style={{ color: "#9b1c31", margin: "5px 0 0 0", fontSize: "24px", fontWeight: "700" }}>
+              {esiTier.replace("TIER", "").trim().toUpperCase()}
+            </h2>
+          </div>
+          <div style={{ textAlign: "right" }}>
+            <span style={{ fontSize: "12px", fontWeight: "bold", color: "#666", letterSpacing: "0.5px" }}>SCORE</span>
+            <h2 style={{ color: "#1a1a1a", margin: "5px 0 0 0", fontSize: "24px", fontWeight: "700" }}>{adjustedScore} / 100</h2>
+          </div>
         </div>
-        <button 
-          onClick={onBackToHome}
-          style={{ padding: "10px 20px", background: "#bd4f6c", color: "#fff", border: "none", borderRadius: "5px", cursor: "pointer" }}
-        >
-          Return to home
-        </button>
+
+        {/* Main Result Card with Red Accent Border */}
+        <div style={{ borderLeft: "4px solid #9b1c31", paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "20px" }}>
+          
+          <div>
+            <h4 style={{ margin: "0 0 6px 0", color: "#333", fontSize: "16px", fontWeight: "600" }}>Symptom Overview:</h4>
+            <p style={{ margin: 0, color: "#555", lineHeight: "1.6", fontSize: "15px" }}>{presentationText}</p>
+          </div>
+
+          {/* <div>
+            <h4 style={{ margin: "0 0 6px 0", color: "#333", fontSize: "16px", fontWeight: "600" }}>Other Things to Consider:</h4>
+            <p style={{ margin: 0, color: "#555", lineHeight: "1.6", fontSize: "15px" }}>{differentialText}</p>
+          </div> */}
+
+          {/* <div>
+            <h4 style={{ margin: "0 0 6px 0", color: "#333", fontSize: "16px", fontWeight: "600" }}>Recommended Next Steps:</h4>
+            <p style={{ margin: 0, color: "#555", lineHeight: "1.6", fontSize: "15px" }}>{recommendationText}</p>
+          </div> */}
+
+          {/* Matched Symptoms Badges */}
+          {matchedSymptoms.length > 0 && (
+            <div style={{ marginTop: "10px" }}>
+              <span style={{ fontSize: "12px", fontWeight: "bold", color: "#666", letterSpacing: "0.5px", display: "block", marginBottom: "10px" }}>
+                MATCHED SYMPTOMS:
+              </span>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
+                {matchedSymptoms.map((symptom: string, idx: number) => (
+                  <span key={idx} style={{ background: "#eef2f6", color: "#334e68", padding: "6px 14px", borderRadius: "4px", fontSize: "13px", fontWeight: "500" }}>
+                    {symptom}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Body Systems Involved Badges */}
+          {organSystems.length > 0 && (
+            <div style={{ marginTop: "5px" }}>
+              <span style={{ fontSize: "12px", fontWeight: "bold", color: "#666", letterSpacing: "0.5px", display: "block", marginBottom: "10px" }}>
+                BODY SYSTEMS INVOLVED:
+              </span>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
+                {organSystems.map((system: string, idx: number) => (
+                  <span key={idx} style={{ background: "#eef2f6", color: "#334e68", padding: "6px 14px", borderRadius: "4px", fontSize: "13px", fontWeight: "500" }}>
+                    {system}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
+        </div>
+
+        {/* Dashboard Button */}
+        <div style={{ marginTop: "40px" }}>
+          <button 
+            onClick={onBackToHome}
+            style={{ 
+              backgroundColor: "#b80036", 
+              color: "#ffffff", 
+              border: "none", 
+              padding: "12px 24px", 
+              borderRadius: "6px", 
+              fontWeight: "600", 
+              fontSize: "15px", 
+              cursor: "pointer",
+              boxShadow: "0 2px 4px rgba(0,0,0,0.1)"
+            }}
+          >
+            Return to Dashboard
+          </button>
+        </div>
+
       </div>
     );
   }
@@ -410,7 +541,7 @@ export default function Questionnaire({ onBackToHome }: QuestionnaireProps) {
           disabled={isLoading}
           style={{ padding: "10px 20px", background: isLoading ? "#d894a4" : "#bd4f6c", color: "#fff", border: "none", borderRadius: "5px", cursor: isLoading ? "not-allowed" : "pointer" }}
         >
-          {isLoading ? "Submitting..." : currentStep === steps.length - 1 ? "Submit Assessment" : "Next Section"}
+          {isLoading ? "Submitting & Analyzing..." : currentStep === steps.length - 1 ? "Submit Assessment" : "Next Section"}
         </button>
       </div>
     </div>
