@@ -1,0 +1,29 @@
+{
+  "model_version": "endoscan_mri_efficientnet_b0_v1.0",
+  "model_type": "EfficientNet-B0 + Platt calibration",
+  "modality": "MRI",
+  "role": "complementary_explainer",
+  "primary_metric": "recall",
+  "chosen_threshold": 0.35999999999999993,
+  "train_composition": {
+    "real_slices": 2921,
+    "synthetic_slices": 0,
+    "augment_positive_only": true
+  },
+  "test_metrics": {
+    "recall": 0.7451,
+    "specificity": 0.7429,
+    "auc": 0.8358,
+    "accuracy": 74.31
+  },
+  "success_criteria": {
+    "Recall": 0.8,
+    "Specificity": 0.75,
+    "AUC": 0.85
+  },
+  "aggregation_default": "max",
+  "output_contract": "finding (str) + confidence (float) + Grad-CAM image, for the GenAI explanation layer only",
+  "used_by_fusion_layer": false,
+  "eligible_patients": "already diagnosed via structured/NLP path or a clinician, requesting explanation of an existing MRI scan",
+  "output_path": "mri_explainer"
+}

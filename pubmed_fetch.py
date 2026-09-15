@@ -1,138 +1,133 @@
 """
-EndoScan AI — PubMed Abstract Fetcher
-======================================
-Pulls endometriosis-related abstracts from PubMed using the free NCBI E-utilities API.
-No API key required for up to 3 requests/second.
-
-Output: pubmed_abstracts.csv
-Columns: pmid, title, abstract, year, keywords
-
-Usage:
-    python pubmed_fetch.py
-    python pubmed_fetch.py --max 2000  # fetch more records
+EndoScan AI — PubMed Abstract Fetcher (extended)
+Fetches abstracts from NCBI E-utilities API.
+No auth required. Rate limit: 3 requests/second.
 """
 
 import requests
 import time
 import csv
 import argparse
-import xml.etree.ElementTree as ET
 from pathlib import Path
+from bs4 import BeautifulSoup   # ← this was missing
 
-# ── Search queries — cast wide, filter later ──────────────────────────────────
-SEARCH_QUERIES = [
-    'endometriosis[MeSH] AND symptoms[Title/Abstract]',
-    'endometriosis[MeSH] AND pelvic pain[Title/Abstract]',
-    'endometriosis[MeSH] AND dysmenorrhea[Title/Abstract]',
-    'endometriosis[MeSH] AND diagnosis[Title/Abstract]',
-    'endometriosis[MeSH] AND quality of life[Title/Abstract]',
-    'endometriosis[MeSH] AND infertility[Title/Abstract]',
-    'endometriosis[MeSH] AND dyspareunia[Title/Abstract]',
-    'endometriosis[MeSH] AND menorrhagia[Title/Abstract]',
-    'adenomyosis[MeSH] AND symptoms[Title/Abstract]',
-    'endometriosis[MeSH] AND Africa[Title/Abstract]',
-    'endometriosis[MeSH] AND sub-Saharan Africa[Title/Abstract]',
-    'endometriosis[MeSH] AND Kenya[Title/Abstract]',
+QUERIES = [
+    'endometriosis symptoms pain',
+    'dysmenorrhea pelvic pain women',
+    'endometriosis dyspareunia infertility',
+    'endometriosis bowel bladder symptoms',
+    'adenomyosis menorrhagia treatment',
+    'endometriosis diagnosis delay patient',
+    'endometriosis quality of life',
+    'deep infiltrating endometriosis',
+    'endometriosis fatigue chronic pain',
+    'endometriosis mental health anxiety depression',
+    'endometriosis Africa Kenya diagnosis',
+    'endometriosis surgical treatment laparoscopy',
 ]
 
-BASE_URL = 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils'
+def fetch_pubmed_batch(query: str, max_results: int = 2000) -> list:
+    # Step 1 — search for IDs
+    search_url    = 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi'
+    search_params = {
+        'db':         'pubmed',
+        'term':       query,
+        'retmax':     max_results,
+        'retmode':    'json',
+        'usehistory': 'y',
+    }
+    search_resp = requests.get(search_url, params=search_params, timeout=15)
+    search_data = search_resp.json()
+
+    webenv    = search_data['esearchresult']['webenv']
+    query_key = search_data['esearchresult']['querykey']
+    total     = int(search_data['esearchresult']['count'])
+    print(f"  Found {total:,} papers for: {query}")
+
+    # Step 2 — fetch abstracts in batches of 200
+    fetch_url  = 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi'
+    abstracts  = []
+    batch_size = 200
+
+    for start in range(0, min(total, max_results), batch_size):
+        fetch_params = {
+            'db':        'pubmed',
+            'query_key': query_key,
+            'WebEnv':    webenv,
+            'retstart':  start,
+            'retmax':    batch_size,
+            'retmode':   'xml',
+            'rettype':   'abstract',
+        }
+        fetch_resp = requests.get(fetch_url, params=fetch_params, timeout=30)
+        soup       = BeautifulSoup(fetch_resp.text, 'xml')
+
+        for article in soup.find_all('PubmedArticle'):
+            abstract = article.find('AbstractText')
+            title    = article.find('ArticleTitle')
+            year_tag = article.find('PubDate')
+
+            if abstract and abstract.text and len(abstract.text) > 50:
+                abstracts.append({
+                    'title':      title.text if title else '',
+                    'abstract':   abstract.text,
+                    'year':       year_tag.find('Year').text
+                                  if year_tag and year_tag.find('Year') else '',
+                    'source':     'pubmed_extended',
+                    'language':   'en',
+                    'esi_label':  'unlabelled',
+                    'symptom_id': 'unknown',
+                })
+
+        fetched = min(start + batch_size, min(total, max_results))
+        print(f"  Fetched {fetched:,} / {min(total, max_results):,}")
+        time.sleep(0.4)   # NCBI rate limit: max 3 req/second
+
+    return abstracts
 
 
-def search_pmids(query: str, max_results: int = 500) -> list[str]:
-    """Search PubMed and return list of PMIDs."""
-    resp = requests.get(f'{BASE_URL}/esearch.fcgi', params={
-        'db': 'pubmed',
-        'term': query,
-        'retmax': max_results,
-        'retmode': 'json',
-        'usehistory': 'n',
-    }, timeout=30)
-    resp.raise_for_status()
-    return resp.json()['esearchresult']['idlist']
+def run(output: str = 'pubmed_abstracts_extended.csv', max_per_query: int = 2000):
+    all_abstracts = []
 
+    for query in QUERIES:
+        print(f"\nFetching: {query}")
+        try:
+            batch = fetch_pubmed_batch(query, max_results=max_per_query)
+            all_abstracts.extend(batch)
+            print(f"  Batch total: {len(batch):,}")
+        except Exception as e:
+            print(f"  Error: {e} — skipping this query")
+        time.sleep(1)
 
-def fetch_abstracts(pmids: list[str], batch_size: int = 100) -> list[dict]:
-    """Fetch abstract text for a list of PMIDs in batches."""
-    records = []
+    # Deduplicate on abstract text
+    seen      = set()
+    unique    = []
+    for rec in all_abstracts:
+        key = rec['abstract'][:100]
+        if key not in seen:
+            seen.add(key)
+            unique.append(rec)
 
-    for i in range(0, len(pmids), batch_size):
-        batch = pmids[i:i + batch_size]
-        resp = requests.get(f'{BASE_URL}/efetch.fcgi', params={
-            'db': 'pubmed',
-            'id': ','.join(batch),
-            'rettype': 'abstract',
-            'retmode': 'xml',
-        }, timeout=60)
-        resp.raise_for_status()
-
-        root = ET.fromstring(resp.content)
-
-        for article in root.findall('.//PubmedArticle'):
-            try:
-                pmid = article.findtext('.//PMID', '')
-                title = article.findtext('.//ArticleTitle', '')
-                year = article.findtext('.//PubDate/Year', '')
-
-                # Abstract may have multiple sections (structured abstracts)
-                abstract_texts = article.findall('.//AbstractText')
-                abstract = ' '.join(
-                    (el.get('Label', '') + ': ' if el.get('Label') else '') + (el.text or '')
-                    for el in abstract_texts
-                ).strip()
-
-                # Keywords
-                kw_list = [kw.text for kw in article.findall('.//Keyword') if kw.text]
-                keywords = '; '.join(kw_list)
-
-                if abstract:  # only keep records with actual abstract text
-                    records.append({
-                        'pmid': pmid,
-                        'title': title,
-                        'abstract': abstract,
-                        'year': year,
-                        'keywords': keywords,
-                    })
-            except Exception:
-                continue
-
-        print(f'  Fetched batch {i // batch_size + 1} — {len(records)} records so far')
-        time.sleep(0.4)  # stay under NCBI rate limit (3 req/s)
-
-    return records
-
-
-def run(max_per_query: int = 500, output_path: str = 'pubmed_abstracts.csv'):
-    all_pmids = set()
-
-    print('=== PubMed Search ===')
-    for query in SEARCH_QUERIES:
-        pmids = search_pmids(query, max_results=max_per_query)
-        new = set(pmids) - all_pmids
-        all_pmids.update(pmids)
-        print(f'  [{len(new):>4} new | {len(all_pmids):>5} total] {query}')
-        time.sleep(0.4)
-
-    print(f'\nTotal unique PMIDs: {len(all_pmids)}')
-    print('\n=== Fetching Abstracts ===')
-
-    pmid_list = list(all_pmids)
-    records = fetch_abstracts(pmid_list)
+    print(f"\nTotal fetched    : {len(all_abstracts):,}")
+    print(f"After dedup      : {len(unique):,}")
 
     # Save
-    out = Path(output_path)
-    with open(out, 'w', newline='', encoding='utf-8') as f:
-        writer = csv.DictWriter(f, fieldnames=['pmid', 'title', 'abstract', 'year', 'keywords'])
-        writer.writeheader()
-        writer.writerows(records)
+    out        = Path(output)
+    fieldnames = ['title', 'abstract', 'year', 'source',
+                  'language', 'esi_label', 'symptom_id']
 
-    print(f'\n✅ Saved {len(records)} abstracts → {out}')
-    print(f'   Average abstract length: {sum(len(r["abstract"]) for r in records) // len(records)} chars')
-    return records
+    with open(out, 'w', newline='', encoding='utf-8') as f:
+        writer = csv.DictWriter(f, fieldnames=fieldnames)
+        writer.writeheader()
+        writer.writerows(unique)
+
+    print(f"✅ Saved {len(unique):,} abstracts → {out}")
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--max', type=int, default=500, help='Max PMIDs per query')
-    parser.add_argument('--output', type=str, default='pubmed_abstracts.csv')
+    parser.add_argument('--output',  type=str, default='pubmed_abstracts_extended.csv')
+    parser.add_argument('--max',     type=int, default=2000,
+                        help='Max abstracts per query')
     args = parser.parse_args()
-    run(max_per_query=args.max, output_path=args.output)
+    run(output=args.output, max_per_query=args.max)

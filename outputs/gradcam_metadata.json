@@ -1,0 +1,72 @@
+[
+  {
+    "path": "outputs/gradcam_samples/gradcam_0_pos.jpg",
+    "img_path": "Glenda_v1.5_classes/frames/c_102_v_(video_3119.mp4)_f_1311.jpg",
+    "label": 1,
+    "prob": 0.707,
+    "pred": 1
+  },
+  {
+    "path": "outputs/gradcam_samples/gradcam_1_pos.jpg",
+    "img_path": "Glenda_v1.5_classes/frames/c_102_v_(video_3119.mp4)_f_185.jpg",
+    "label": 1,
+    "prob": 0.9605,
+    "pred": 1
+  },
+  {
+    "path": "outputs/gradcam_samples/gradcam_2_pos.jpg",
+    "img_path": "Glenda_v1.5_classes/frames/c_102_v_(video_3124.mp4)_f_97.jpg",
+    "label": 1,
+    "prob": 0.9999,
+    "pred": 1
+  },
+  {
+    "path": "outputs/gradcam_samples/gradcam_3_pos.jpg",
+    "img_path": "Glenda_v1.5_classes/frames/c_102_v_(video_3130.mp4)_f_0.jpg",
+    "label": 1,
+    "prob": 0.4887,
+    "pred": 0
+  },
+  {
+    "path": "outputs/gradcam_samples/gradcam_4_pos.jpg",
+    "img_path": "Glenda_v1.5_classes/frames/c_120_v_(video_3598.mp4)_f_713.jpg",
+    "label": 1,
+    "prob": 0.6759,
+    "pred": 1
+  },
+  {
+    "path": "outputs/gradcam_samples/gradcam_5_neg.jpg",
+    "img_path": "/home/joy/Downloads/GLENDA_v1_0/GLENDA_v1.0/DS/no_pathology/frames/v_2607_s_2534-2971/f_2615.jpg",
+    "label": 0,
+    "prob": 0.089,
+    "pred": 0
+  },
+  {
+    "path": "outputs/gradcam_samples/gradcam_6_neg.jpg",
+    "img_path": "/home/joy/Downloads/GLENDA_v1_0/GLENDA_v1.0/DS/no_pathology/frames/v_3528_s_1030-2231/f_1601.jpg",
+    "label": 0,
+    "prob": 0.495,
+    "pred": 0
+  },
+  {
+    "path": "outputs/gradcam_samples/gradcam_7_neg.jpg",
+    "img_path": "/home/joy/Downloads/GLENDA_v1_0/GLENDA_v1.0/DS/no_pathology/frames/v_3312_s_0-278/f_146.jpg",
+    "label": 0,
+    "prob": 0.1624,
+    "pred": 0
+  },
+  {
+    "path": "outputs/gradcam_samples/gradcam_8_neg.jpg",
+    "img_path": "/home/joy/Downloads/GLENDA_v1_0/GLENDA_v1.0/DS/no_pathology/frames/v_3528_s_179-537/f_239.jpg",
+    "label": 0,
+    "prob": 0.349,
+    "pred": 0
+  },
+  {
+    "path": "outputs/gradcam_samples/gradcam_9_neg.jpg",
+    "img_path": "/home/joy/Downloads/GLENDA_v1_0/GLENDA_v1.0/DS/no_pathology/frames/v_3528_s_179-537/f_279.jpg",
+    "label": 0,
+    "prob": 0.267,
+    "pred": 0
+  }
+]
