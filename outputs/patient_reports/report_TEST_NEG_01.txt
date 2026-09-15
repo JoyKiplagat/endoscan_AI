@@ -1,0 +1,19 @@
+Case ID: TEST_NEG_01
+Diagnosis: No Endometriosis Visualized
+Confidence: 99.0%
+
+Here is a clear summary of the AI analysis for your records:
+
+---
+
+### 1. Visual Findings Summary
+The AI evaluated the tissue in this frame of your procedure, placing its primary attention on the illuminated pelvic structures visible at the bottom and center of the view (shown by the lighter focused area in the right-hand image). Across the entire region examined, the model did not identify any dark spots, tissue scarring, or abnormal implants typically associated with endometriosis.
+
+### 2. Clinical Interpretation
+The model reported **No Endometriosis Visualized** with a high confidence level (**99.0%**). 
+
+This is a reassuring result, indicating that the specific area captured in this image appears clear of visible endometriotic lesions. It suggests that the surface tissue in this field of view shows normal visual characteristics.
+
+### 3. Recommended Next Steps
+* **Consult Your Care Team:** While this individual frame shows no visible pathology, a complete evaluation involves reviewing the full video of your procedure alongside your overall symptoms and health history.
+* **Discuss Next Steps:** Schedule a follow-up conversation with your surgeon or doctor to review the overall findings of your procedure and discuss the best plan for managing your symptoms moving forward.

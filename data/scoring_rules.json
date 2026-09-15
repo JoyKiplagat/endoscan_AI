@@ -43,7 +43,7 @@
       "referral_urgency": "urgent"
     },
     "CRITICAL": {
-      "score_range": { "min": 76, "max": 999 },
+      "score_range": { "min": 76, "max": 99 },
       "rasrm_equivalent": "Stage IV (Severe)",
       "label": "Critical",
       "colour_code": "#A32D2D",

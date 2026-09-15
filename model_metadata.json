@@ -1,0 +1,74 @@
+{
+  "model_version": "endoscan_lgb_v1.0",
+  "model_type": "LightGBM + Platt calibration",
+  "n_features": 18,
+  "features": [
+    "Age",
+    "BMI",
+    "Cycle_Length",
+    "Age_of_Menarche",
+    "Dysmenorrhea_Score",
+    "Pelvic_Pain_Score",
+    "Dyspareunia_Score",
+    "Dyschezia_Score",
+    "Urinary_Symptoms_Score",
+    "Mental_Health_Score",
+    "Family_History",
+    "Infertility_Status",
+    "total_symptom_burden",
+    "any_severe_symptom",
+    "pain_triad_score",
+    "bowel_urinary_score",
+    "years_since_menarche",
+    "bmi_category"
+  ],
+  "base_features": [
+    "Age",
+    "BMI",
+    "Cycle_Length",
+    "Age_of_Menarche",
+    "Dysmenorrhea_Score",
+    "Pelvic_Pain_Score",
+    "Dyspareunia_Score",
+    "Dyschezia_Score",
+    "Urinary_Symptoms_Score",
+    "Mental_Health_Score",
+    "Family_History",
+    "Infertility_Status"
+  ],
+  "engineered_features": [
+    "total_symptom_burden",
+    "any_severe_symptom",
+    "pain_triad_score",
+    "bowel_urinary_score",
+    "years_since_menarche",
+    "bmi_category"
+  ],
+  "train_rows": 408000,
+  "test_rows": 72000,
+  "best_iteration": 1000,
+  "test_metrics": {
+    "AUC": 0.9856,
+    "F1": 0.9084,
+    "Accuracy": 0.916,
+    "Precision": 0.9084,
+    "Recall": 0.9083,
+    "Avg Precision": 0.9838,
+    "Brier Score": 0.0481,
+    "Log Loss": 0.1695
+  },
+  "cv_metrics": {
+    "auc_mean": 0.9855,
+    "auc_std": 0.0003,
+    "f1_mean": 0.9092,
+    "f1_std": 0.0011
+  },
+  "esi_tier_thresholds": {
+    "Low": "1\u201325",
+    "Moderate": "26\u201350",
+    "High": "51\u201375",
+    "Critical": "76\u2013100"
+  },
+  "fusion_layer_input": "esi_score (int 1\u2013100) + esi_tier (str)",
+  "output_path": "structured_classifier"
+}

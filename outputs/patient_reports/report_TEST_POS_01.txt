@@ -1,0 +1,24 @@
+Case ID: TEST_POS_01
+Diagnosis: Endometriosis Present
+Confidence: 97.7%
+
+Here is a clear, supportive breakdown of your surgical findings and AI analysis:
+
+---
+
+### 1. Visual Findings Summary
+* **Laparoscopic View (Left):** This image shows the tissue lining your pelvic area as seen through the surgical camera. 
+* **AI Heatmap (Right):** The bright red and orange overlay shows the specific region where the AI concentrated its analysis. Within this highlighted area, the network identified subtle tissue variations, including small whitish spots (lesions) and distinct blood vessel patterns along the pelvic lining.
+
+---
+
+### 2. Clinical Interpretation
+* **Result:** The AI model identified features strongly consistent with **endometriosis** (with a confidence score of 97.7%).
+* **What This Means:** Endometriosis is a common condition where tissue similar to the lining of the uterus grows on other surfaces inside the pelvis. These growths can cause localized inflammation, which often explains symptoms such as pelvic pain, cramping, or discomfort. Identifying these subtle areas is a crucial step toward understanding the root cause of your symptoms.
+
+---
+
+### 3. Recommended Next Steps
+* **Follow-Up Discussion:** Schedule a detailed post-operative consultation with your gynecologist or surgeon to review these findings together.
+* **Treatment Planning:** Your physician will help tailor a personalized care plan based on your unique goals (such as pain management, hormonal treatment, or surgical removal of the tissue). 
+* **Reassurance:** Having a clear, visual identification of these areas provides your healthcare team with actionable information to help you find effective relief and support going forward.
