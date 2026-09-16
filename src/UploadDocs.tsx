@@ -87,7 +87,7 @@ export default function UploadDocs({ onBackToHome }: UploadDocsProps) {
     formData.append("scan_file", selectedFile);
 
     try {
-      const response = await fetch("http://127.0.0.1:8000/analyze-scan/", {
+      const response = await fetch("https://marina-anymore-overcome.ngrok-free.dev/analyze-scan/", {
         method: "POST",
         body: formData,
       });

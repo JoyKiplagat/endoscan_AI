@@ -173,7 +173,6 @@ export default function Questionnaire({ onBackToHome }: QuestionnaireProps) {
             "Yes, confirmed endometriosis",
             "Yes, severe period pain or suspected endometriosis (but never formally diagnosed)",
             "No known family history",
-            "Unknown",
             "None of the above"
           ]
         },
@@ -277,7 +276,8 @@ export default function Questionnaire({ onBackToHome }: QuestionnaireProps) {
     };
 
     try {
-      const response = await fetch("http://127.0.0.1:8000/api/questionnaire/anonymous-analyze/", {
+      // Swapped out localhost connection to track live ngrok backend tunnel natively
+      const response = await fetch("https://marina-anymore-overcome.ngrok-free.dev/api/questionnaire/anonymous-analyze/", {
         method: "POST",
         headers: { 
           "Content-Type": "application/json" 

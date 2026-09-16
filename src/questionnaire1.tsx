@@ -165,7 +165,6 @@ export default function Questionnaire({ onBackToHome }: QuestionnaireProps) {
             "Yes, confirmed endometriosis",
             "Yes, severe period pain or suspected endometriosis (but never formally diagnosed)",
             "No known family history",
-            "Unknown",
             "None of the above"
           ]
         },
@@ -248,8 +247,10 @@ export default function Questionnaire({ onBackToHome }: QuestionnaireProps) {
       raw_responses: answers
     };
 
+    const API_BASE_URL = (import.meta as any).env.VITE_API_BASE_URL || "https://marina-anymore-overcome.ngrok-free.dev";
+
     try {
-      const response = await fetch("http://127.0.0.1:8000/api/patients/questionnaire/", {
+      const response = await fetch(`${API_BASE_URL}/api/patients/questionnaire/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -257,7 +258,6 @@ export default function Questionnaire({ onBackToHome }: QuestionnaireProps) {
         },
         body: JSON.stringify(payload)
       });
-
       const data = await response.json().catch(() => null);
 
       if (response.ok) {

@@ -37,6 +37,10 @@ interface QuestionnaireSubmission {
     risk_level?: string;
     summary?: string;
     confidence_score?: number;
+    tier?: string;
+    score?: number;
+    adjusted_score?: number;
+    probability?: number;
     [key: string]: any;
   } | null;
 }
@@ -63,6 +67,8 @@ export default function PatientDashboard() {
   const navigate = useNavigate();
   const currentPatientId = localStorage.getItem("patientId") || "1";
   
+  const API_BASE_URL = (import.meta as any).env.VITE_API_BASE_URL || "https://marina-anymore-overcome.ngrok-free.dev";
+
   const [isEditingProfile, setIsEditingProfile] = useState(false);
   const [profileData, setProfileData] = useState({
     name: localStorage.getItem("patientName") || "Anonymous",
@@ -112,7 +118,7 @@ export default function PatientDashboard() {
       if (!headers) return;
 
       try {
-        const profileRes = await fetch(`http://127.0.0.1:8000/api/patients/profile/${currentPatientId}/`, { headers });
+        const profileRes = await fetch(`${API_BASE_URL}/api/patients/profile/${currentPatientId}/`, { headers });
         if (handleAuthError(profileRes)) return;
         if (profileRes.ok) {
           const profile = await profileRes.json();
@@ -124,21 +130,21 @@ export default function PatientDashboard() {
           });
         }
 
-        const logsResponse = await fetch(`http://127.0.0.1:8000/api/patients/logs/?patient=${currentPatientId}`, { headers });
+        const logsResponse = await fetch(`${API_BASE_URL}/api/patients/logs/?patient=${currentPatientId}`, { headers });
         if (handleAuthError(logsResponse)) return;
         if (logsResponse.ok) {
           const logsData = await logsResponse.json();
           setSymptomLogs(logsData);
         }
 
-        const questionnaireRes = await fetch(`http://127.0.0.1:8000/api/patients/questionnaire/?patient=${currentPatientId}`, { headers });
+        const questionnaireRes = await fetch(`${API_BASE_URL}/api/patients/questionnaire/?patient=${currentPatientId}`, { headers });
         if (handleAuthError(questionnaireRes)) return;
         if (questionnaireRes.ok) {
           const submissionsData = await questionnaireRes.json();
           setQuestionnaireSubmissions(submissionsData);
         }
 
-        const scansResponse = await fetch(`http://127.0.0.1:8000/api/patients/scans/?patient=${currentPatientId}`, { headers });
+        const scansResponse = await fetch(`${API_BASE_URL}/api/patients/scans/?patient=${currentPatientId}`, { headers });
         if (handleAuthError(scansResponse)) return;
         if (scansResponse.ok) {
           const scansData = await scansResponse.json();
@@ -150,7 +156,7 @@ export default function PatientDashboard() {
     };
 
     fetchDashboardMetadata();
-  }, [currentPatientId, navigate]);
+  }, [currentPatientId, navigate, API_BASE_URL]);
 
   useEffect(() => {
     const activeSubmissions = questionnaireSubmissions.filter(
@@ -165,7 +171,7 @@ export default function PatientDashboard() {
 
       for (const sub of activeSubmissions) {
         try {
-          const res = await fetch(`http://127.0.0.1:8000/api/patients/questionnaire/status/${sub.id}/`, { headers });
+          const res = await fetch(`${API_BASE_URL}/api/patients/questionnaire/status/${sub.id}/`, { headers });
           if (res.ok) {
             const updatedJob = await res.json();
             if (updatedJob.status === 'COMPLETED' || updatedJob.status === 'FAILED') {
@@ -185,7 +191,7 @@ export default function PatientDashboard() {
     }, 2000);
 
     return () => clearInterval(intervalId);
-  }, [questionnaireSubmissions]);
+  }, [questionnaireSubmissions, API_BASE_URL]);
 
   const handleProfileChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -198,7 +204,7 @@ export default function PatientDashboard() {
     if (!headers) return;
 
     try {
-      const response = await fetch(`http://127.0.0.1:8000/api/patients/profile/${currentPatientId}/`, {
+      const response = await fetch(`${API_BASE_URL}/api/patients/profile/${currentPatientId}/`, {
         method: "PUT",
         headers,
         body: JSON.stringify({
@@ -241,7 +247,7 @@ export default function PatientDashboard() {
     if (!headers) return;
 
     try {
-      const response = await fetch("http://127.0.0.1:8000/api/patients/logs/", {
+      const response = await fetch(`${API_BASE_URL}/api/patients/logs/`, {
         method: "POST",
         headers,
         body: JSON.stringify({
@@ -292,7 +298,7 @@ export default function PatientDashboard() {
       uploadPayload.append("patient", currentPatientId);
       uploadPayload.append("scan_file", selectedFile[0]);
 
-      const response = await fetch("http://127.0.0.1:8000/api/patients/scans/", {
+      const response = await fetch(`${API_BASE_URL}/api/patients/scans/`, {
         method: "POST",
         headers,
         body: uploadPayload
@@ -400,8 +406,8 @@ export default function PatientDashboard() {
                   const isFailed = submission.status === 'FAILED';
                   const output = submission.model_output;
                   
-                  const esiTier = output?.esi_result?.tier || output?.risk_level || (isProcessing ? "Processing..." : "MODERATE TIER");
-                  const adjustedScore = output?.esi_result?.adjusted_endo_score || output?.esi_result?.score || output?.adjusted_score || "N/A";
+                  const esiTier = output?.esi_result?.tier || output?.risk_level || output?.tier || (isProcessing ? "Processing..." : "MODERATE TIER");
+                  const adjustedScore = output?.esi_result?.adjusted_endo_score || output?.esi_result?.score || output?.adjusted_score || output?.probability || "N/A";
                   
                   const rawPresentation = output?.clinical_perspectives?.endo_possibility || output?.explanation || output?.summary || "";
 
@@ -447,8 +453,8 @@ export default function PatientDashboard() {
                   const rawMatched = output?.matched_symptoms || output?.esi_result?.matched_symptoms || [];
                   const rawSystems = output?.organ_systems_flagged || output?.esi_result?.organ_systems_flagged || output?.esi_result?.systems_affected || output?.systems_affected || [];
 
-                  const matchedSymptoms = rawMatched.map(simplifySymptomTag);
-                  const organSystems = rawSystems.map(simplifySystemTag);
+                  const matchedSymptoms = Array.isArray(rawMatched) ? rawMatched.map(simplifySymptomTag) : [];
+                  const organSystems = Array.isArray(rawSystems) ? rawSystems.map(simplifySystemTag) : [];
 
                   return (
                     <div key={submission.id} className="bg-red-50/40 border-l-4 border-[#9b1c31] p-5 rounded-r-xl border border-red-100/60 flex flex-col gap-4">
@@ -544,13 +550,14 @@ export default function PatientDashboard() {
               ) : (
                 scans.map((scan, i) => {
                   const fileName = scan.scan_file ? scan.scan_file.split('/').pop() : `Scan_Record_${scan.id}`;
-                  const fileUrl = scan.scan_file?.startsWith("http") ? scan.scan_file : `http://127.0.0.1:8000${scan.scan_file}`;
+                  
+                  const fileUrl = scan.scan_file?.startsWith("http") ? scan.scan_file : `${API_BASE_URL}${scan.scan_file}`;
                   
                   const modality = scan.detected_modality || scan.analysis_details?.detected_modality;
                   const posPct = scan.confidence_percentage ?? scan.analysis_details?.confidence_percentage;
                   const negPct = scan.neg_confidence_percentage ?? scan.analysis_details?.neg_confidence_percentage;
                   const overlayImage = scan.heatmap_overlay || scan.analysis_details?.heatmap_overlay;
-                  const summaryText = scan.scan_note || scan.analysis_details?.summary;
+                  const summaryText = scan.scan_note || scan.summary || scan.analysis_details?.summary;
 
                   return (
                     <div key={scan.id || i} className="flex flex-col gap-3 p-4 bg-gray-50 rounded-xl border border-gray-100">
