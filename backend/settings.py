@@ -87,6 +87,7 @@ DATABASES = {
         'PASSWORD': 'westcoast123',  # Your PostgreSQL password
         'HOST': 'localhost',
         'PORT': '5432',
+        'CONN_MAX_AGE': 60,
     }
 }
 
