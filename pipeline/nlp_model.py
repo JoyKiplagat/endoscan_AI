@@ -18,11 +18,6 @@ Load this ONCE at backend startup (importing this module runs the loading
 code below immediately) — BioBERT and the sentence-transformer are both
 too slow to reload per-request.
 
-CHANGED FROM THE COLAB NOTEBOOK: the original notebook read the Gemini key
-via `google.colab.userdata.get(...)`, which only works inside Colab. A
-backend server needs the environment-variable pattern instead — see
-GEMINI_API_KEY below. Set it with `export GEMINI_API_KEY=...` before
-starting the backend, same as the scan-router notebook.
 """
 
 import os
@@ -34,9 +29,9 @@ import numpy as np
 import torch
 from transformers import AutoTokenizer, AutoModelForTokenClassification
 
-# ── UPDATE THESE to wherever your NLP notebook actually saved these ────
-DATA_DIR = Path('./data')
-NER_MODEL_DIR = Path('./endoscan_ner_model')
+
+DATA_DIR = Path(__file__).resolve().parent.parent / 'data'
+NER_MODEL_DIR = Path(__file__).resolve().parent.parent / 'endoscan_ner_model'
 # ─────────────────────────────────────────────────────────────────────
 
 ALIASES_PATH = DATA_DIR / 'symptom_aliases.json'
