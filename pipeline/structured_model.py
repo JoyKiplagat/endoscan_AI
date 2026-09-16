@@ -17,9 +17,8 @@ disk on every API call would be slow and pointless.
 import joblib
 from pathlib import Path
 
-# ── UPDATE THIS to wherever your structured notebook actually saved these ──
-ARTIFACTS_DIR = Path('.')
-# ────────────────────────────────────────────────────────────────────────
+
+ARTIFACTS_DIR = Path(__file__).resolve().parent.parent / 'artifacts'
 
 CLASSIFIER_PATH = ARTIFACTS_DIR / 'endoscan_classifier.pkl'
 FEATURE_LIST_PATH = ARTIFACTS_DIR / 'feature_list.pkl'
