@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from .models import PatientProfile, SymptomLog, ScanRecord
+from .models import PatientProfile, SymptomLog, ScanRecord, QuestionnaireSubmission, ChatMessage
 
 class RegisterSerializer(serializers.ModelSerializer):
     location = serializers.CharField(write_only=True)
@@ -33,3 +33,15 @@ class ScanRecordSerializer(serializers.ModelSerializer):
     class Meta:
         model = ScanRecord
         fields = '__all__'
+
+
+class QuestionnaireSubmissionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = QuestionnaireSubmission
+        fields = ('id', 'patient', 'submitted_at', 'raw_responses', 'model_output')
+
+
+class ChatMessageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ChatMessage
+        fields = ('id', 'patient', 'message', 'sender', 'created_at')
