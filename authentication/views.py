@@ -352,3 +352,15 @@ class ChangePasswordView(APIView):
         request.user.set_password(new_password)
         request.user.save()
         return Response({"message": "Password changed successfully."}, status=status.HTTP_200_OK)
+from rest_framework_simplejwt.tokens import RefreshToken
+
+class LogoutView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request):
+        try:
+            token = RefreshToken(request.data["refresh"])
+            token.blacklist()
+            return Response({"message": "Logged out successfully."}, status=status.HTTP_200_OK)
+        except Exception:
+            return Response({"error": "Invalid or missing refresh token."}, status=status.HTTP_400_BAD_REQUEST)

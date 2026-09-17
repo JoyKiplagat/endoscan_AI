@@ -32,3 +32,9 @@ urlpatterns += [
 
 path('patients/me/', MyProfileView.as_view(), name='my-profile'),
 path('patients/change-password/', ChangePasswordView.as_view(), name='change-password'),
+
+from .views import LogoutView
+
+urlpatterns += [
+    path('patients/logout/', LogoutView.as_view(), name='logout'),
+]
