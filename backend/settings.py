@@ -14,7 +14,7 @@ from pathlib import Path
 from datetime import timedelta
 import os
 
-from jupyterlab_server import config
+from decouple import config
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -23,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-$bj#j4w9yqgo0#h7ej*x$%d3n=le5%szn)&n3-&srd_y64#lc!"
+SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -85,11 +85,11 @@ WSGI_APPLICATION = "backend.wsgi.application"
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'endo_db',          # Your PostgreSQL database name
-        'USER': 'endo_user',      # Your PostgreSQL username
-        'PASSWORD': 'westcoast123',  # Your PostgreSQL password
-        'HOST': 'localhost',
-        'PORT': '5432',
+        'NAME': config('DB_NAME'),
+        'USER': config('DB_USER'),
+        'PASSWORD': config('DB_PASSWORD'),
+        'HOST': config('DB_HOST'),
+        'PORT': config('DB_PORT'),
     }
 }
 
@@ -150,7 +150,7 @@ SIMPLE_JWT = {
     'ROTATE_REFRESH_TOKENS': False,
     'BLACKLIST_AFTER_ROTATION': False,
     'ALGORITHM': 'HS256',
-    'SIGNING_KEY': 'YOUR_SECRET_KEY_KEEP_IT_SECURE',
+    'SIGNING_KEY': config('JWT_SIGNING_KEY'),
     'AUTH_HEADER_TYPES': ('Bearer',),
 }
 
