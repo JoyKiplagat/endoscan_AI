@@ -28,3 +28,40 @@ class ScanRecord(models.Model):
     notes = models.TextField(blank=True, null=True)
     def __str__(self):
         return f"Scan Record {self.id} for {self.patient.name}"
+
+
+class QuestionnaireSubmission(models.Model):
+    """
+    One full symptom-checker submission: the raw answers the patient gave,
+    plus whatever the NLP/scoring model produced from them. This is the
+    model the dashboard's 'Assessment History & ML Insights' panel reads.
+    """
+    patient = models.ForeignKey(PatientProfile, on_delete=models.CASCADE, related_name="questionnaire_submissions")
+    submitted_at = models.DateTimeField(auto_now_add=True)
+    raw_responses = models.JSONField(default=dict)
+    model_output = models.JSONField(null=True, blank=True)
+
+    def __str__(self):
+        return f"Questionnaire Submission {self.id} for {self.patient.name}"
+
+
+class ChatMessage(models.Model):
+    """
+    A single message in the 'Her Matters' support chat widget.
+    Each user message and each bot reply is its own row so history
+    can be replayed in order.
+    """
+    class Sender(models.TextChoices):
+        USER = 'user', 'User'
+        BOT = 'bot', 'Bot'
+
+    patient = models.ForeignKey(PatientProfile, on_delete=models.CASCADE, related_name="chat_messages")
+    message = models.TextField()
+    sender = models.CharField(max_length=10, choices=Sender.choices)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['created_at']
+
+    def __str__(self):
+        return f"[{self.sender}] {self.message[:40]}"
