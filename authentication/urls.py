@@ -1,5 +1,6 @@
 from django.urls import path
 from .views import (
+    MyProfileView,
     PatientRegisterView, 
     PatientLoginView, 
     ForgotPasswordView, 
@@ -27,3 +28,5 @@ urlpatterns += [
     path('patients/chat/', ChatMessageView.as_view(), name='chat-messages'),
     path('patients/questionnaire-submissions/', QuestionnaireSubmissionView.as_view(), name='questionnaire-submissions'),
 ]
+
+path('patients/me/', MyProfileView.as_view(), name='my-profile'),

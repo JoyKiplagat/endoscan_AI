@@ -325,3 +325,16 @@ class QuestionnaireSubmissionView(APIView):
             serializer.save(patient=profile)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class MyProfileView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        profile = request.user.profile
+        return Response({
+            "id": profile.id,
+            "name": profile.name,
+            "endometriosis_stage": profile.endometriosis_stage,
+            "location": profile.location,
+            "diagnosis_date": profile.diagnosis_date
+        }, status=status.HTTP_200_OK)
