@@ -386,3 +386,9 @@ class LogoutView(APIView):
             return Response(status=status.HTTP_204_NO_CONTENT)
         except SymptomLog.DoesNotExist:
             return Response({"error": "Log not found"}, status=status.HTTP_404_NOT_FOUND)
+
+class HealthCheckView(APIView):
+    permission_classes = [permissions.AllowAny]
+
+    def get(self, request):
+        return Response({"status": "ok", "service": "EndoScan AI backend"}, status=status.HTTP_200_OK)

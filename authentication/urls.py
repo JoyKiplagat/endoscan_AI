@@ -38,3 +38,8 @@ from .views import LogoutView
 urlpatterns += [
     path('patients/logout/', LogoutView.as_view(), name='logout'),
 ]
+from .views import HealthCheckView
+
+urlpatterns += [
+    path('health/', HealthCheckView.as_view(), name='health-check'),
+]
