@@ -6,8 +6,14 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 
-from .models import PatientProfile, SymptomLog, ScanRecord
-from .serializers import RegisterSerializer, SymptomLogSerializer, ScanRecordSerializer
+from .models import PatientProfile, SymptomLog, ScanRecord, QuestionnaireSubmission, ChatMessage
+from .serializers import (
+    RegisterSerializer,
+    SymptomLogSerializer,
+    ScanRecordSerializer,
+    QuestionnaireSubmissionSerializer,
+    ChatMessageSerializer,
+)
 
 class PatientRegisterView(APIView):
     permission_classes = [permissions.AllowAny]
@@ -190,35 +196,94 @@ class ScanRecordView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 class QuestionnaireProcessView(APIView):
+    """
+    Handles the NLP symptom-checker submissions.
+
+    GET  /api/patients/questionnaire/?patient=<id>  -> submission history for the dashboard
+    POST /api/patients/questionnaire/                -> save a new submission
+
+    Field names here match what questionnaire1.tsx actually sends:
+    { patient: <int>, raw_responses: {...}, model_output: {...} }
+    """
     permission_classes = [permissions.IsAuthenticated]
 
+    def get(self, request):
+        patient_id = request.query_params.get('patient')
+        if not patient_id:
+            return Response([], status=status.HTTP_200_OK)
+        submissions = QuestionnaireSubmission.objects.filter(
+            patient_id=patient_id
+        ).order_by('-submitted_at')
+        return Response(
+            QuestionnaireSubmissionSerializer(submissions, many=True).data,
+            status=status.HTTP_200_OK,
+        )
+
     def post(self, request):
-        patient_id = request.data.get("patient_id")
-        answers = request.data.get("answers", {})
-        log_date = request.data.get("date")
+        serializer = QuestionnaireSubmissionSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        # 1. Run AI inference or construct model summary
-        summary_result = (
-            f"Risk Evaluation: {answers.get('pain_frequency', 'Moderate')} symptoms detected. "
-            f"Recommended follow-up regarding cyclic pain signals."
+
+class ChatMessageView(APIView):
+    """
+    Handles the 'Her Matters' support chat widget.
+
+    GET  /api/patients/chat/?patient=<id>  -> full message history, oldest first
+    POST /api/patients/chat/                -> save the user's message, generate
+                                               a bot reply, save and return it
+
+    NOTE: this bot reply is a placeholder rule-based response so the widget
+    works end-to-end. Swap _generate_bot_reply() for a real NLP/model call
+    when that's ready.
+    """
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        patient_id = request.query_params.get('patient')
+        if not patient_id:
+            return Response([], status=status.HTTP_200_OK)
+        messages = ChatMessage.objects.filter(patient_id=patient_id)
+        return Response(ChatMessageSerializer(messages, many=True).data, status=status.HTTP_200_OK)
+
+    def post(self, request):
+        patient_id = request.data.get('patient')
+        user_text = request.data.get('message', '').strip()
+
+        if not patient_id or not user_text:
+            return Response(
+                {"error": "Both 'patient' and 'message' are required."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        try:
+            patient = PatientProfile.objects.get(id=patient_id)
+        except PatientProfile.DoesNotExist:
+            return Response({"error": "Patient not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        user_msg = ChatMessage.objects.create(patient=patient, message=user_text, sender=ChatMessage.Sender.USER)
+
+        bot_text = self._generate_bot_reply(user_text)
+        bot_msg = ChatMessage.objects.create(patient=patient, message=bot_text, sender=ChatMessage.Sender.BOT)
+
+        return Response(
+            {
+                "user_message": ChatMessageSerializer(user_msg).data,
+                "bot_message": ChatMessageSerializer(bot_msg).data,
+            },
+            status=status.HTTP_201_CREATED,
         )
 
-        # 2. Update existing entry or construct a new SymptomLog row
-        log, created = SymptomLog.objects.get_or_create(
-            patient_id=patient_id,
-            date=log_date,
-            defaults={
-                "pain_level": answers.get("pain_level", 5),
-                "bleeding": answers.get("bleeding", "None"),
-                "fatigue": answers.get("fatigue", "Moderate"),
-                "notes": "Generated from Clinical Questionnaire",
-                "questionnaire_summary": summary_result
-            }
-        )
-
-        if not created:
-            log.questionnaire_summary = summary_result
-            log.save()
-
-        serializer = SymptomLogSerializer(log)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+    def _generate_bot_reply(self, user_text: str) -> str:
+        lowered = user_text.lower()
+        if any(word in lowered for word in ("pain", "hurt", "ache")):
+            return (
+                "I'm sorry you're dealing with pain. Logging it in your symptom "
+                "tracker helps your specialist see patterns over time — would you "
+                "like a link to the daily log?"
+            )
+        if any(word in lowered for word in ("appointment", "doctor", "specialist")):
+            return "You can find endometriosis specialists near you under the Support section on the Home page."
+        return "Thanks for reaching out — a member of the Her Matters team will follow up if this needs more than general guidance."

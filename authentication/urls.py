@@ -6,7 +6,8 @@ from .views import (
     PatientProfileUpdateView, 
     SymptomLogView, 
     ScanRecordView,
-    QuestionnaireProcessView
+    QuestionnaireProcessView,
+    ChatMessageView,
 )
 
 urlpatterns = [
@@ -17,4 +18,5 @@ urlpatterns = [
     path('patients/logs/', SymptomLogView.as_view(), name='logs'),
     path('patients/scans/', ScanRecordView.as_view(), name='scans'),
     path('patients/questionnaire/', QuestionnaireProcessView.as_view(), name='questionnaire-process'),
+    path('patients/chat/', ChatMessageView.as_view(), name='chat'),
 ]
