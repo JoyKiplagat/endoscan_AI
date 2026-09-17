@@ -45,3 +45,17 @@ class ChatMessageSerializer(serializers.ModelSerializer):
     class Meta:
         model = ChatMessage
         fields = ('id', 'patient', 'message', 'sender', 'created_at')
+# authentication/serializers.py — add at the bottom
+
+class ChatMessageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ChatMessage
+        fields = '__all__'
+        read_only_fields = ('patient',)
+
+
+class QuestionnaireSubmissionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = QuestionnaireSubmission
+        fields = '__all__'
+        read_only_fields = ('patient',)

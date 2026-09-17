@@ -20,3 +20,10 @@ urlpatterns = [
     path('patients/questionnaire/', QuestionnaireProcessView.as_view(), name='questionnaire-process'),
     path('patients/chat/', ChatMessageView.as_view(), name='chat'),
 ]
+
+from .views import ChatMessageView, QuestionnaireSubmissionView
+
+urlpatterns += [
+    path('patients/chat/', ChatMessageView.as_view(), name='chat-messages'),
+    path('patients/questionnaire-submissions/', QuestionnaireSubmissionView.as_view(), name='questionnaire-submissions'),
+]

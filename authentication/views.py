@@ -287,3 +287,41 @@ class ChatMessageView(APIView):
         if any(word in lowered for word in ("appointment", "doctor", "specialist")):
             return "You can find endometriosis specialists near you under the Support section on the Home page."
         return "Thanks for reaching out — a member of the Her Matters team will follow up if this needs more than general guidance."
+    
+
+from .models import PatientProfile, SymptomLog, ScanRecord, ChatMessage, QuestionnaireSubmission
+from .serializers import (
+    RegisterSerializer, SymptomLogSerializer, ScanRecordSerializer,
+    ChatMessageSerializer, QuestionnaireSubmissionSerializer
+)
+
+class ChatMessageView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        messages = ChatMessage.objects.filter(patient__user=request.user).order_by('created_at')
+        return Response(ChatMessageSerializer(messages, many=True).data, status=status.HTTP_200_OK)
+
+    def post(self, request):
+        profile = request.user.profile
+        serializer = ChatMessageSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(patient=profile)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class QuestionnaireSubmissionView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        subs = QuestionnaireSubmission.objects.filter(patient__user=request.user).order_by('-submitted_at')
+        return Response(QuestionnaireSubmissionSerializer(subs, many=True).data, status=status.HTTP_200_OK)
+
+    def post(self, request):
+        profile = request.user.profile
+        serializer = QuestionnaireSubmissionSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(patient=profile)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
