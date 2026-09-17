@@ -194,6 +194,17 @@ class ScanRecordView(APIView):
             return Response(ScanRecordSerializer(scan_instance, context={'request': request}).data, status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    def delete(self, request):
+        scan_id = request.query_params.get('id')
+        if not scan_id:
+            return Response({"error": "id query param is required"}, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            scan = ScanRecord.objects.get(id=scan_id, patient__user=request.user)
+            scan.scan_file.delete(save=False)  # remove the actual file too
+            scan.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except ScanRecord.DoesNotExist:
+            return Response({"error": "Scan not found"}, status=status.HTTP_404_NOT_FOUND)
     
 class QuestionnaireProcessView(APIView):
     """
@@ -364,3 +375,14 @@ class LogoutView(APIView):
             return Response({"message": "Logged out successfully."}, status=status.HTTP_200_OK)
         except Exception:
             return Response({"error": "Invalid or missing refresh token."}, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request):
+        log_id = request.query_params.get('id')
+        if not log_id:
+            return Response({"error": "id query param is required"}, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            log = SymptomLog.objects.get(id=log_id, patient__user=request.user)
+            log.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except SymptomLog.DoesNotExist:
+            return Response({"error": "Log not found"}, status=status.HTTP_404_NOT_FOUND)
