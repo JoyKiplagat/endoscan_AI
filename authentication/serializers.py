@@ -34,6 +34,14 @@ class ScanRecordSerializer(serializers.ModelSerializer):
         model = ScanRecord
         fields = '__all__'
 
+    def validate_scan_file(self, value):
+        valid_extensions = ['.jpg', '.jpeg', '.png', '.pdf', '.dcm']
+        if not any(value.name.lower().endswith(ext) for ext in valid_extensions):
+            raise serializers.ValidationError("Unsupported file type. Allowed: jpg, jpeg, png, pdf, dcm.")
+        if value.size > 10 * 1024 * 1024:
+            raise serializers.ValidationError("File too large. Max size is 10MB.")
+        return value
+
 
 class QuestionnaireSubmissionSerializer(serializers.ModelSerializer):
     class Meta:
