@@ -1,5 +1,6 @@
 from django.urls import path
 from .views import (
+    ChangePasswordView,
     MyProfileView,
     PatientRegisterView, 
     PatientLoginView, 
@@ -30,3 +31,4 @@ urlpatterns += [
 ]
 
 path('patients/me/', MyProfileView.as_view(), name='my-profile'),
+path('patients/change-password/', ChangePasswordView.as_view(), name='change-password'),
