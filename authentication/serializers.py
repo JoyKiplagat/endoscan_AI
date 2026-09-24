@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from .models import PatientProfile, SymptomLog, ScanRecord
+from .models import PatientProfile, SymptomLog, ScanRecord, QuestionnaireSubmission
 
 class RegisterSerializer(serializers.ModelSerializer):
     location = serializers.CharField(write_only=True)
@@ -29,7 +29,30 @@ class SymptomLogSerializer(serializers.ModelSerializer):
         model = SymptomLog
         fields = '__all__'
 
+from rest_framework import serializers
+from .models import ScanRecord
+
 class ScanRecordSerializer(serializers.ModelSerializer):
+    # Generates a full media URL when request context is provided
+    scan_file = serializers.FileField(read_only=True)
+
     class Meta:
         model = ScanRecord
-        fields = '__all__'
+        fields = ['id', 'patient', 'scan_file', 'scan_note', 'uploaded_at']
+        read_only_fields = ['id', 'scan_note', 'uploaded_at']
+        
+from rest_framework import serializers
+from .models import QuestionnaireSubmission, PatientProfile
+
+class QuestionnaireSubmissionSerializer(serializers.ModelSerializer):
+    # Ensures patient IDs can be passed and validated natively as integers
+    patient = serializers.PrimaryKeyRelatedField(queryset=PatientProfile.objects.all())
+    
+    # Using JSONField explicitly forces DRF to accept any nested dictionary structures completely intact
+    raw_responses = serializers.JSONField()
+    model_output = serializers.JSONField(required=False, allow_null=True)
+
+    class Meta:
+        model = QuestionnaireSubmission
+        fields = ['id', 'patient', 'submitted_at', 'raw_responses', 'model_output']
+
